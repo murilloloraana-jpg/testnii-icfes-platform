@@ -1,0 +1,561 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agregar Pregunta - TestNii</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+      :root {
+        --primary-purple: #7c3aed;
+        --light-purple: #a78bfa;
+        --lighter-purple: #ede9fe;
+        --darker-purple: #5b21b6;
+        
+        --secondary-teal: #14b8a6; 
+        --light-teal: #5eead4;    
+        --lighter-teal: #ccfbf1;  
+
+        --accent-pink: #ec4899; 
+        --light-pink: #fbcfe8;
+
+        --accent-amber: #f59e0b; 
+        --light-amber: #fef3c7;
+
+        --page-bg: linear-gradient(135deg, #f3e8ff 0%, #e0f2fe 100%);
+        --card-bg: #ffffff;
+        --card-border-subtle: #e0e7ff; 
+        
+        --text-primary-color: #1f2937; 
+        --text-secondary-color: #6b7280; 
+        --text-on-primary: #ffffff; 
+
+        --input-border-color: #d1d5db;
+        --input-focus-border-color: var(--primary-purple);
+        --input-bg-color: #f9fafb;
+
+        --shadow-color: rgba(91, 33, 182, 0.06);
+        --strong-shadow-color: rgba(91, 33, 182, 0.12);
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--page-bg);
+        color: var(--text-primary-color);
+        margin: 0;
+      }
+
+      .sidebar {
+        height: 100vh;
+        background-color: var(--card-bg);
+        box-shadow: 3px 0 10px rgba(0,0,0,0.05);
+        position: fixed;
+        width: 260px;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        padding-top: 1.5rem;
+      }
+
+      .main-content {
+        margin-left: 260px;
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+      }
+
+      .profile-section {
+        padding: 1rem 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid var(--card-border-subtle);
+        margin-bottom: 1rem;
+      }
+
+      .profile-brand {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .profile-brand i {
+        font-size: 2rem;
+      }
+
+      .profile-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--darker-purple);
+        margin-top: 0.5rem;
+      }
+      .profile-role {
+        font-size: 0.85rem;
+        color: var(--text-secondary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      .nav-link {
+        color: var(--text-secondary-color);
+        padding: 0.9rem 1.5rem;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        text-decoration: none;
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .nav-link:hover {
+        background-color: var(--lighter-purple);
+        color: var(--primary-purple);
+        border-left-color: var(--primary-purple);
+      }
+
+      .nav-link.active {
+        background-color: var(--lighter-purple);
+        color: var(--darker-purple);
+        font-weight: 600;
+        border-left-color: var(--darker-purple);
+      }
+      .nav-link.active .nav-icon {
+        color: var(--darker-purple);
+      }
+
+      .nav-icon {
+        margin-right: 1rem;
+        width: 22px;
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--light-purple);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 1.5rem;
+      }
+      
+      .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-logout {
+        background-color: var(--light-pink);
+        color: var(--accent-pink);
+        border: 1px solid var(--accent-pink);
+        width: 100%; 
+      }
+      .btn-logout:hover {
+        background-color: var(--accent-pink);
+        color: var(--text-on-primary);
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);
+      }
+      
+      .btn-logout-sidebar {
+        background-color: transparent;
+        color: var(--text-secondary-color);
+        border: 1px solid var(--card-border-subtle);
+        width: 100%;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+      .btn-logout-sidebar:hover {
+        background-color: var(--lighter-pink);
+        color: var(--accent-pink);
+        border-color: var(--accent-pink);
+      }
+      .btn-logout-sidebar i {
+        margin-right: 0.8rem;
+      }
+      
+      .form-container {
+        background-color: var(--card-bg);
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px var(--strong-shadow-color);
+        width: 100%;
+        max-width: 700px; 
+        margin-top: 2rem;
+      }
+
+      .form-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+      .form-subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary-color);
+        margin-bottom: 2.5rem;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-primary-color);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .form-control,
+      .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--input-border-color);
+        border-radius: 8px;
+        background-color: var(--input-bg-color);
+        color: var(--text-primary-color);
+        box-sizing: border-box; /* Asegura que padding no afecte el width total */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: var(--input-focus-border-color);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        background-color: var(--card-bg);
+      }
+      
+      .btn-submit {
+        background-color: var(--primary-purple);
+        color: var(--text-on-primary);
+        width: 100%; 
+        padding: 0.85rem 1.5rem;
+        font-size: 1.05rem;
+      }
+      .btn-submit:hover {
+        background-color: var(--darker-purple);
+        box-shadow: 0 6px 20px rgba(91, 33, 182, 0.3);
+      }
+
+      .option-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem; /* Espacio entre radio, letra e input */
+        margin-bottom: 1rem;
+      }
+
+      .option-row input[type="text"].form-control {
+          flex-grow: 1; 
+      }
+
+      .option-letter {
+        font-weight: 600;
+        color: var(--primary-purple);
+        min-width: 25px; /* Ajustado para A. B. etc */
+      }
+      
+      .option-radio {
+        margin-right: 0.25rem; /* Pequeño espacio antes de la letra */
+        accent-color: var(--primary-purple); /* Colorea el radio button */
+      }
+
+      .btn-add-option {
+        background-color: var(--secondary-teal);
+        color: var(--text-on-primary);
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem; /* Consistent margin */
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .btn-add-option:hover {
+        background-color: var(--light-teal);
+        color: var(--text-primary-color); /* Darker text on hover */
+      }
+
+      .btn-delete-option {
+        background-color: transparent;
+        color: var(--accent-pink);
+        border: 1px solid var(--accent-pink);
+        padding: 0.4rem 0.7rem;
+        width: auto; 
+        min-width: 0;
+        border-radius: 50%; 
+        line-height: 1; 
+        margin-left: 0.5rem; 
+      }
+      .btn-delete-option:hover {
+        background-color: var(--light-pink);
+        color: var(--accent-pink);
+        box-shadow: 0 2px 8px rgba(236, 72, 153, 0.2);
+      }
+      .btn-delete-option i {
+        font-size: 0.9rem; 
+        vertical-align: middle;
+      }
+      .btn-delete-option:disabled {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #adb5bd;
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="profile-section">
+        <div class="profile-brand">
+          <i class="bi bi-mortarboard-fill"></i> TestNii
+        </div>
+        <h5 class="profile-name">{{ request.session.profesor_nombre|default:"Profesor" }}</h5>
+        <p class="profile-role">Panel de Profesor</p>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="{% url 'base:panel_profesor' %}" class="nav-link">
+          <span class="nav-icon"><i class="bi bi-collection-fill"></i></span> Módulos
+        </a>
+        <a href="{% url 'base:ver_resultados_estudiantes_profesor' %}" class="nav-link">
+          <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Estudiantes
+        </a>
+        <a href="{% url 'base:editar_perfil_profesor' %}" class="nav-link">
+          <span class="nav-icon"><i class="bi bi-person-circle"></i></span> Perfil
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <form method="post" action="{% url 'base:logout_profesor' %}" style="width: 100%;">
+            {% csrf_token %}
+            <button type="submit" class="btn-modern btn-logout-sidebar">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="form-container">
+        <h2 class="form-title">Agregar Nueva Pregunta</h2>
+        <p class="form-subtitle">Define el enunciado, las opciones y selecciona la respuesta correcta.</p>
+        
+        {% if error %}
+            <div class="alert alert-danger" role="alert" style="background-color: var(--light-pink); color: var(--accent-pink); border: 1px solid var(--accent-pink); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" id="preguntaForm">
+          {% csrf_token %}
+          <input type="hidden" name="examen_id" value="{{ examen_id }}" />
+          
+          <div class="form-group">
+            <label for="enunciado" class="form-label">Enunciado de la Pregunta:</label>
+            <textarea id="enunciado" class="form-control" name="enunciado" rows="3" placeholder="Escribe aquí el enunciado..." required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="tipo_pregunta" class="form-label">Tipo de Pregunta:</label>
+            <select id="tipo_pregunta" name="tipo_pregunta" class="form-select">
+              <option value="Opción Múltiple" selected>Opción Múltiple</option>
+              <option value="Verdadero/Falso">Verdadero/Falso</option>
+              <!-- Puedes agregar más tipos si es necesario -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Opciones de Respuesta (Selecciona la correcta):</label>
+            <div id="respuestas-container">
+              <!-- Las opciones de respuesta se agregarán aquí dinámicamente -->
+            </div>
+            <button type="button" class="btn-modern btn-add-option" onclick="agregarRespuesta()">
+              <i class="bi bi-plus-lg"></i> Agregar Opción
+            </button>
+          </div>
+          
+          <button type="submit" class="btn-modern btn-submit">
+            <i class="bi bi-save-fill"></i> Guardar Pregunta
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let optionIdCounter = 0; // Para IDs únicos de radio/label
+
+      function agregarRespuesta() {
+        const container = document.getElementById("respuestas-container");
+        const numCurrentOptions = container.querySelectorAll(".option-row").length;
+        optionIdCounter++;
+
+        const row = document.createElement("div");
+        row.className = "option-row";
+
+        const radioInput = document.createElement("input");
+        radioInput.type = "radio";
+        radioInput.name = "respuesta_correcta_selector";
+        radioInput.id = "radio_opcion_" + optionIdCounter;
+        radioInput.className = "option-radio";
+        radioInput.required = true; 
+
+        const textInput = document.createElement("input");
+        textInput.type = "text";
+        textInput.name = "respuestas";
+        textInput.className = "form-control";
+        textInput.required = true;
+
+        const labelLetter = document.createElement("label");
+        labelLetter.className = "option-letter";
+        labelLetter.htmlFor = "radio_opcion_" + optionIdCounter;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "btn-modern btn-delete-option";
+        deleteButton.innerHTML = '<i class="bi bi-trash-fill"></i>';
+        deleteButton.onclick = function() { eliminarRespuesta(this); };
+        
+        row.appendChild(radioInput);
+        row.appendChild(labelLetter);
+        row.appendChild(textInput);
+        row.appendChild(deleteButton);
+        container.appendChild(row);
+
+        actualizarOpcionesUI();
+      }
+
+      function eliminarRespuesta(buttonEl) {
+        buttonEl.closest('.option-row').remove();
+        actualizarOpcionesUI();
+      }
+
+      function actualizarOpcionesUI() {
+        const container = document.getElementById("respuestas-container");
+        const rows = container.querySelectorAll(".option-row");
+        const tipoPregunta = document.getElementById('tipo_pregunta').value;
+        const addButton = document.querySelector('.btn-add-option');
+        let algunaSeleccionada = false;
+
+        rows.forEach((row, index) => {
+            const letterDisplay = row.querySelector(".option-letter");
+            const textInput = row.querySelector("input[type='text'][name='respuestas']");
+            const deleteBtn = row.querySelector(".btn-delete-option");
+            const radioBtn = row.querySelector(".option-radio");
+
+            if (radioBtn) {
+                radioBtn.value = index.toString();
+                if (radioBtn.checked) algunaSeleccionada = true;
+            }
+
+            if (tipoPregunta === "Opción Múltiple") {
+                const currentLetter = String.fromCharCode('A'.charCodeAt(0) + index);
+                if (letterDisplay) {
+                    letterDisplay.textContent = currentLetter + ".";
+                }
+                if (textInput && !textInput.readOnly) {
+                    textInput.placeholder = "Texto de la opción " + currentLetter;
+                }
+                if (deleteBtn) {
+                    deleteBtn.style.display = '';
+                    deleteBtn.disabled = rows.length <= 2;
+                }
+                
+            } else {
+                if (deleteBtn) {
+                    deleteBtn.style.display = 'none';
+                }
+            }
+        });
+
+        if (addButton) {
+            addButton.style.display = (tipoPregunta === "Opción Múltiple") ? '' : 'none';
+        }
+
+        if (tipoPregunta === "Opción Múltiple") {
+            if (!algunaSeleccionada && rows.length > 0) {
+                rows[0].querySelector('.option-radio').checked = true;
+            }
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const tipoPreguntaSelect = document.getElementById('tipo_pregunta');
+        
+        function gestionarOpcionesPorTipo() {
+            const container = document.getElementById("respuestas-container");
+            container.innerHTML = ''; 
+            optionIdCounter = 0; 
+
+            const tipo = tipoPreguntaSelect.value;
+
+            if (tipo === "Opción Múltiple") {
+                agregarRespuesta(); 
+                agregarRespuesta(); 
+            } else if (tipo === "Verdadero/Falso") {
+                optionIdCounter++;
+                const vRow = document.createElement("div"); vRow.className = "option-row";
+                const vRadio = document.createElement("input"); vRadio.type = "radio"; vRadio.name = "respuesta_correcta_selector"; vRadio.className="option-radio"; vRadio.value="Verdadero"; vRadio.id="radio_opcion_" + optionIdCounter; vRadio.required=true; vRadio.checked=true;
+                const vLabel = document.createElement("label"); vLabel.className="option-letter"; vLabel.htmlFor="radio_opcion_" + optionIdCounter; vLabel.textContent = " ";
+                const vInput = document.createElement("input"); vInput.type="text"; vInput.name="respuestas"; vInput.className="form-control"; vInput.value="Verdadero"; vInput.readOnly=true;
+                vRow.appendChild(vRadio); vRow.appendChild(vLabel); vRow.appendChild(vInput); 
+                container.appendChild(vRow);
+
+                optionIdCounter++;
+                const fRow = document.createElement("div"); fRow.className = "option-row";
+                const fRadio = document.createElement("input"); fRadio.type = "radio"; fRadio.name = "respuesta_correcta_selector"; fRadio.className="option-radio"; 
+                fRadio.value="Falso"; fRadio.id="radio_opcion_" + optionIdCounter; fRadio.required=true;
+                const fLabel = document.createElement("label"); fLabel.className="option-letter"; fLabel.htmlFor="radio_opcion_" + optionIdCounter; fLabel.textContent = " ";
+                const fInput = document.createElement("input"); fInput.type="text"; fInput.name="respuestas"; fInput.className="form-control"; fInput.value="Falso"; fInput.readOnly=true;
+                fRow.appendChild(fRadio); fRow.appendChild(fLabel); fRow.appendChild(fInput);
+                container.appendChild(fRow);
+            }
+            actualizarOpcionesUI(); 
+        }
+
+        tipoPreguntaSelect.addEventListener('change', gestionarOpcionesPorTipo);
+        gestionarOpcionesPorTipo(); 
+
+        const form = document.getElementById('preguntaForm');
+        form.addEventListener('submit', function(event) {
+            const tipoPregunta = document.getElementById('tipo_pregunta').value;
+            if (tipoPregunta === "Opción Múltiple") {
+                const radios = container.querySelectorAll('.option-radio');
+                let oneChecked = false;
+                for (const radio of radios) {
+                    if (radio.checked) {
+                        oneChecked = true;
+                        break;
+                    }
+                }
+                if (!oneChecked && radios.length > 0) {
+                    radios[0].checked = true; 
+                }
+            }
+        });
+      });
+
+    </script>
+  </body>
+</html>

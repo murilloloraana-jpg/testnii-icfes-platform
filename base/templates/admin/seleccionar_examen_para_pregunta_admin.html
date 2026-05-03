@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Seleccionar Examen para Agregar Pregunta (Admin)
+{% endblock %}
+
+{% block page_content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0 text-center">
+            <i class="bi bi-check2-square me-2"></i>
+            Seleccionar Examen Global para Nueva Pregunta
+          </h4>
+        </div>
+        <div class="card-body p-4 p-md-5">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <p class="text-muted mb-4">
+            Hola, {{ admin_nombre|default:'Administrador' }}. Selecciona uno de los siguientes exámenes globales de tipo ICFES al que deseas agregar una nueva pregunta.
+          </p>
+
+          {% if examenes %}
+            <form method="post" action="{% url 'base:admin_seleccionar_examen_agregar_pregunta' %}">
+              {% csrf_token %}
+              <div class="mb-4">
+                <label for="examen_id" class="form-label fs-5 fw-medium">Exámenes ICFES Disponibles:</label>
+                <select name="examen_id" id="examen_id" class="form-select form-select-lg">
+                  <option value="" selected disabled>-- Elige un examen --</option>
+                  {% for examen in examenes %}
+                    <option value="{{ examen.id_examen }}">{{ examen.tipo }} (ID: {{ examen.id_examen }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+              
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-arrow-right-circle me-2"></i>
+                  Continuar y Agregar Pregunta
+                </button>
+                <a href="{% url 'base:listar_preguntas' %}" class="btn btn-outline-secondary">
+                  <i class="bi bi-x-circle me-2"></i>
+                  Cancelar y Volver al Listado
+                </a>
+              </div>
+            </form>
+          {% else %}
+            <div class="alert alert-warning text-center">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              No se encontraron exámenes de tipo ICFES globales en el sistema. Debes crear al menos uno para poder agregarle preguntas.
+              <div class="mt-3">
+                 <a href="{% url 'base:agregar_examen' %}" class="btn btn-sm btn-warning">Crear Examen Global</a>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <div class="card-footer text-muted text-center text-sm">
+          Panel de Administración de Preguntas
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Podrías añadir JS específico aquí si es necesario en el futuro
+</script>
+{% endblock %} 

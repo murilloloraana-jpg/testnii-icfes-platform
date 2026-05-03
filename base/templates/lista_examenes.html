@@ -1,0 +1,404 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Gestión de Exámenes
+{% endblock %}
+
+{% block page_content %}
+  <!-- Page Header -->
+   <br><br><br><br><br><br><br><br><br><br><br><br><br>
+   
+  
+   
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-1">Gestión de Exámenes</h2>
+      <p class="text-muted mb-0">Administra los exámenes y simulacros del sistema</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-calendar-week"></i>
+        Programar
+      </button>
+      <button class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-download"></i>
+        Exportar
+      </button>
+      <a href="{% url 'base:agregar_examen' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i>
+        Crear Examen
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Total Exámenes</h6>
+              <h4 class="mb-0">{{ examenes.paginator.count }}</h4>
+            </div>
+            <i class="bi bi-clipboard-check-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Activos</h6>
+              <h4 class="mb-0">
+                {{ count_activos }}
+              </h4>
+            </div>
+            <i class="bi bi-play-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Pendientes</h6>
+              <h4 class="mb-0">
+                {{ count_pendientes }}
+              </h4>
+            </div>
+            <i class="bi bi-clock-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Realizados</h6>
+              <h4 class="mb-0">
+                {{ count_realizados }}
+              </h4>
+            </div>
+            <i class="bi bi-check-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions / Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" action="{% url 'base:listar_examenes' %}">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" name="q" placeholder="Buscar exámenes..." value="{{ query }}" />
+            </div>
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" name="estado">
+              <option value="Todos los estados" {% if estado_filter == 'Todos los estados' %}selected{% endif %}>Todos los estados</option>
+              <option value="Activo" {% if estado_filter == 'Activo' %}selected{% endif %}>Activo</option>
+              <option value="Pendiente" {% if estado_filter == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+              <option value="Realizado" {% if estado_filter == 'Realizado' %}selected{% endif %}>Realizado</option>
+              <option value="Cancelado" {% if estado_filter == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" name="tipo">
+              <option value="Todos los tipos" {% if tipo_filter == 'Todos los tipos' %}selected{% endif %}>Todos los tipos</option>
+              {% for tipo in tipos_examen %}
+                <option value="{{ tipo }}" {% if tipo_filter == tipo %}selected{% endif %}>{{ tipo }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input type="date" class="form-control" name="fecha" value="{{ fecha_filter }}" />
+          </div>
+          <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-funnel"></i> Filtrar
+            </button>
+            <a href="{% url 'base:listar_examenes' %}" class="btn btn-outline-secondary w-100">
+              <i class="bi bi-arrow-clockwise"></i> Limpiar
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Exams Grid/List -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-clipboard-check-fill me-2"></i>
+              Lista de Exámenes ({{ examenes.paginator.count }})
+            </h5>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-grid-3x3-gap"></i></button>
+              <button class="btn btn-sm btn-outline-secondary active"><i class="bi bi-list"></i></button>
+            </div>
+          </div>
+        </div>
+
+        {% if examenes.object_list %}
+          <div class="table-container">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>
+                      <input type="checkbox" class="form-check-input" />
+                    </th>
+                    <th>Examen</th>
+                    <th>Fecha & Hora</th>
+                    <th>Duración</th>
+                    <th>Ubicación</th>
+                    <th>Estado</th>
+                    <th>Profesor</th>
+                    <th>Preguntas</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for examen in examenes %}
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input" />
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="subject-icon bg-primary text-white me-3">
+                            <i class="bi bi-clipboard-check"></i>
+                          </div>
+                          <div>
+                            <div class="fw-semibold">{{ examen.tipo }}</div>
+                            <small class="text-muted">ID: {{ examen.id_examen }}</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        {% if examen.fecha_examen %}
+                          <div>
+                            <div class="fw-medium">{{ examen.fecha_examen|date:'d/m/Y' }}</div>
+                            <small class="text-muted">{{ examen.fecha_examen|date:'H:i' }}</small>
+                          </div>
+                        {% else %}
+                          <span class="text-muted">No programada</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if examen.duracion %}
+                          <span class="badge bg-light text-dark">
+                            <i class="bi bi-clock me-1"></i>
+                            {{ examen.duracion }}h
+                          </span>
+                        {% else %}
+                          <span class="text-muted">No definida</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-geo-alt me-2 text-muted"></i>
+                          {{ examen.ubicacion|default:'Virtual' }}
+                        </div>
+                      </td>
+                      <td>
+                        <span class="badge 
+                          {% if examen.estado == 'Activo' %} bg-success
+                          {% elif examen.estado == 'Pendiente' %} bg-warning text-dark
+                          {% elif examen.estado == 'Realizado' %} bg-info
+                          {% elif examen.estado == 'Cancelado' %} bg-danger
+                          {% else %} bg-secondary
+                          {% endif %}">
+                          {% if examen.estado == 'Activo' %} <i class="bi bi-play-fill me-1"></i>
+                          {% elif examen.estado == 'Pendiente' %} <i class="bi bi-clock-fill me-1"></i>
+                          {% elif examen.estado == 'Realizado' %} <i class="bi bi-check-circle-fill me-1"></i>
+                          {% elif examen.estado == 'Cancelado' %} <i class="bi bi-x-circle-fill me-1"></i>
+                          {% endif %}
+                          {{ examen.estado }}
+                        </span>
+                      </td>
+                      <td>
+                        {% if examen.profesor %}
+                          <div class="d-flex align-items-center">
+                            <div class="avatar-sm bg-secondary text-white me-2">{{ examen.profesor.nombre|first }}{{ examen.profesor.apellido|first }}</div>
+                            <div>
+                              <div class="fw-medium">{{ examen.profesor.nombre }} {{ examen.profesor.apellido }}</div>
+                              <small class="text-muted">{{ examen.profesor.area_especializacion|default:'Docente' }}</small>
+                            </div>
+                          </div>
+                        {% else %}
+                          <span class="text-muted">Sin asignar</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <div class="text-center">
+                          <div class="fw-semibold">{{ examen.pregunta_set.count|default:0 }}</div>
+                          <small class="text-muted">preguntas</small>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-outline-primary" title="Ver detalles"><i class="bi bi-eye"></i></button>
+                          <a href="{% url 'base:editar_examen' examen.id_examen %}" class="btn btn-sm btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                          <button class="btn btn-sm btn-outline-info" title="Gestionar preguntas"><i class="bi bi-question-circle"></i></button>
+                          <a href="{% url 'base:eliminar_examen' examen.id_examen %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar el examen {{ examen.tipo }}?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="text-muted">
+                Mostrando {{ examenes.start_index }}-{{ examenes.end_index }} de {{ examenes.paginator.count }} exámenes
+              </div>
+              <nav>
+                <ul class="pagination pagination-sm mb-0">
+                  {% if examenes.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page=1&q={{ query }}&estado={{ estado_filter }}&tipo={{ tipo_filter }}&fecha={{ fecha_filter }}">Primera</a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ examenes.previous_page_number }}&q={{ query }}&estado={{ estado_filter }}&tipo={{ tipo_filter }}&fecha={{ fecha_filter }}">Anterior</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item disabled"><span class="page-link">Primera</span></li>
+                    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                  {% endif %}
+
+                  {% for num in examenes.paginator.page_range %}
+                    {% if examenes.number == num %}
+                      <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > examenes.number|add:'-3' and num < examenes.number|add:'3' %}
+                      <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ query }}&estado={{ estado_filter }}&tipo={{ tipo_filter }}&fecha={{ fecha_filter }}">{{ num }}</a></li>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if examenes.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ examenes.next_page_number }}&q={{ query }}&estado={{ estado_filter }}&tipo={{ tipo_filter }}&fecha={{ fecha_filter }}">Siguiente</a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ examenes.paginator.num_pages }}&q={{ query }}&estado={{ estado_filter }}&tipo={{ tipo_filter }}&fecha={{ fecha_filter }}">Última</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                    <li class="page-item disabled"><span class="page-link">Última</span></li>
+                  {% endif %}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        {% else %}
+          <!-- Empty State -->
+          <div class="card-body">
+            <div class="empty-state text-center py-5">
+              <i class="bi bi-clipboard-x fs-1 text-muted mb-3"></i>
+              <h4>No se encontraron exámenes</h4>
+              <p class="text-muted">
+                {% if query or estado_filter != 'Todos los estados' or tipo_filter != 'Todos los tipos' or fecha_filter %}
+                  Intenta ajustar los filtros o revisa el término de búsqueda.
+                  <br>
+                  <a href="{% url 'base:listar_examenes' %}" class="btn btn-sm btn-outline-primary mt-2">
+                    <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
+                  </a>
+                {% else %}
+                  Comienza creando el primer examen del sistema.
+                  <br>
+                  <a href="{% url 'base:agregar_examen' %}" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Crear Primer Examen
+                  </a>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .subject-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    
+    .avatar-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+    
+    .table th {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      color: #374151;
+    }
+    
+    .btn-group .btn {
+      border: 1px solid #dee2e6;
+    }
+    
+    .btn-group .btn:not(:last-child) {
+        border-right: 0;
+    }
+
+    .btn-group .btn:hover {
+      z-index: 2;
+    }
+    
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.35em 0.65em;
+    }
+    
+    .fw-medium {
+      font-weight: 500 !important;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+    }
+    .empty-state h4 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+  </style>
+{% endblock %}

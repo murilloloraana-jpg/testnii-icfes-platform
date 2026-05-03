@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Template</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root { /* Definimos la paleta para fácil referencia y consistencia */
+            --primary-purple: #7c3aed; 
+            --light-purple: #a78bfa; 
+            --lighter-purple: #ede9fe; 
+            --darker-purple: #5b21b6; 
+            --secondary-teal: #14B8A6; 
+            --light-teal: #5EEAD4;    
+            --lighter-teal: #CCFBF1;  
+            --text-on-teal: #ffffff; 
+            --page-bg-chat: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); /* Fondo general similar */
+            --card-bg-chat: #ffffff; 
+            --text-primary-chat: #1f2937; 
+            --text-secondary-chat: #6b7280; 
+            --text-on-purple-chat: #ffffff;
+            --input-bg-chat: #ffffff;
+            --message-user-bg: var(--lighter-purple); /* Fondo mensaje usuario */
+            --message-user-text: var(--darker-purple); /* Texto mensaje usuario */
+            --message-bot-bg: #ffffff; /* Fondo mensaje bot (blanco) */
+            --message-bot-text: var(--text-primary-chat); /* Texto mensaje bot */
+            --sidebar-bg: var(--primary-purple); /* Morado principal para sidebar */
+            --sidebar-text: var(--text-on-purple-chat);
+            --sidebar-btn-border: rgba(255, 255, 255, 0.3);
+            --sidebar-btn-hover-bg: var(--darker-purple);
+            --new-chat-btn-bg: var(--secondary-teal); /* Teal para el botón "Nuevo chat" */
+            --new-chat-btn-text: var(--text-on-teal);
+            --new-chat-btn-hover-bg: #0D9488; /* Un teal más oscuro para hover */
+            --send-btn-bg: var(--secondary-teal); /* Teal para el botón de enviar */
+            --send-btn-text: var(--text-on-teal);
+            --send-btn-hover-bg: #0D9488; /* Teal más oscuro para hover */
+            --code-block-bg: var(--lighter-purple); /* Fondo para bloques de código */
+        }
+
+        body {
+            font-family: "Inter", sans-serif; /* Cambiado a Inter para consistencia */
+            background-color: var(--page-bg-chat); /* Usar variable */
+            margin: 0;
+            min-height: 100vh;    
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px 15%;
+            background-color: var(--page-bg-chat); /* Fondo general para mensajes */
+            scroll-behavior: smooth;
+        }
+
+        .input-container {
+            padding: 20px 15%;
+            background-color: var(--input-bg-chat); /* Fondo del input container */
+            border-top: 1px solid var(--card-border-subtle, #ddd6fe); /* Borde sutil morado */
+            position: sticky;
+            bottom: 0;
+        }
+        
+        /* .materia-titulo no se usa en chat.html, se puede quitar si no es necesario */
+
+        .sidebar {
+            background-color: var(--sidebar-bg); /* Usar variable */
+            color: var(--sidebar-text); /* Usar variable */
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            padding-top: 20px;
+        }
+
+        .sidebar-btn {
+            background-color: transparent;
+            color: var(--sidebar-text); /* Usar variable */
+            border: 1px solid var(--sidebar-btn-border); /* Usar variable */
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: left;
+            padding: 10px 15px;
+            transition: all 0.3s;
+            width: 90%;
+            font-weight: 500;
+        }
+
+        .sidebar-btn:hover {
+            background-color: var(--sidebar-btn-hover-bg); /* Usar variable */
+        }
+
+        .new-chat-btn {
+            background-color: var(--new-chat-btn-bg); /* Usar variable */
+            color: var(--new-chat-btn-text); /* Usar variable */
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            width: 90%;
+            font-weight: 600;
+        }
+
+        .new-chat-btn:hover {
+            background-color: var(--new-chat-btn-hover-bg); /* Usar variable */
+        }
+        
+        /* Se eliminó .chat-container duplicado */
+
+        .message {
+            padding: 10px; /* Reducido un poco el padding vertical */
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem; /* Espacio entre burbujas de mensaje */
+            border-radius: 12px; /* Bordes redondeados para la burbuja entera */
+            max-width: 75%; /* Ancho máximo de la burbuja */
+        }
+
+        .user-message {
+            background-color: var(--message-user-bg); /* Usar variable */
+            color: var(--message-user-text); /* Usar variable */
+            margin-left: auto; /* Alinea a la derecha */
+            flex-direction: row-reverse; /* Invierte el orden para avatar a la derecha */
+        }
+        .user-message .avatar {
+            margin-right: 0;
+            margin-left: 10px; /* Espacio entre texto y avatar */
+        }
+
+
+        .bot-message {
+            background-color: var(--message-bot-bg); /* Usar variable */
+            color: var(--message-bot-text); /* Usar variable */
+            margin-right: auto; /* Alinea a la izquierda */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Sombra sutil para mensajes del bot */
+        }
+        .bot-message .avatar {
+             margin-right: 10px;
+        }
+
+
+        .avatar {
+            width: 35px; /* Ligeramente más grande */
+            height: 35px;
+            border-radius: 8px; /* Bordes más redondeados */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* margin-right: 15px; (controlado por user/bot message) */
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .user-avatar {
+            background-color: var(--secondary-teal); /* Usar variable */
+            color: var(--text-on-teal); /* Usar variable */
+        }
+
+        .bot-avatar {
+            background-color: var(--primary-purple); /* Usar variable */
+            color: var(--text-on-purple-chat); /* Usar variable */
+        }
+
+        .message-content {
+            flex-grow: 1;
+        }
+        .message-content p {
+            margin-bottom: 0; /* Evitar margen extra dentro de la burbuja */
+            line-height: 1.6;
+        }
+
+
+        .chat-input {
+            border-radius: 12px; /* Bordes más redondeados */
+            resize: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra más pronunciada */
+            padding: 12px 55px 12px 20px; /* Ajuste de padding */
+            min-height: 50px; /* Ajuste de altura mínima */
+            border: 1px solid var(--card-border-subtle, #ddd6fe); /* Borde sutil */
+            background-color: var(--input-bg-chat);
+            color: var(--text-primary-chat);
+        }
+        .chat-input::placeholder {
+            color: var(--text-secondary-chat);
+        }
+
+
+        .send-btn {
+            position: absolute;
+            right: 12px; /* Ajuste de posición */
+            bottom: 12px; /* Ajuste de posición */
+            background-color: var(--send-btn-bg); /* Usar variable */
+            color: var(--send-btn-text); /* Usar variable */
+            border: none;
+            border-radius: 8px; /* Bordes más redondeados */
+            width: 36px; /* Ligeramente más grande */
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .send-btn:hover {
+            background-color: var(--send-btn-hover-bg); /* Usar variable */
+        }
+
+        .nav-top { /* Navbar para móviles */
+            background-color: var(--primary-purple); /* Usar variable */
+            color: var(--text-on-purple-chat); /* Usar variable */
+            padding: 10px 20px;
+        }
+        .nav-top .btn-text-white { /* Para botones de hamburguesa, etc. */
+            color: var(--text-on-purple-chat) !important;
+        }
+
+        .code-block {
+            background-color: var(--code-block-bg); /* Usar variable */
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: var(--text-primary-chat); /* Asegurar legibilidad del texto */
+            border: 1px solid var(--card-border-subtle, #ddd6fe);
+        }
+        
+        /* Estilos para mobile sidebar (colapsada) */
+        #mobileSidebar .bg-dark { /* Cambiar el fondo oscuro por uno de la paleta */
+            background-color: var(--darker-purple) !important;
+        }
+        #mobileSidebar .new-chat-btn {
+             background-color: var(--new-chat-btn-bg);
+             color: var(--new-chat-btn-text);
+        }
+         #mobileSidebar .new-chat-btn:hover {
+             background-color: var(--new-chat-btn-hover-bg);
+        }
+        #mobileSidebar .sidebar-btn {
+            color: var(--sidebar-text);
+            border-color: var(--sidebar-btn-border);
+        }
+        #mobileSidebar .sidebar-btn:hover {
+             background-color: var(--primary-purple); /* Un poco más claro que el fondo de la sidebar móvil */
+        }
+
+
+        @media (max-width: 768px) {
+            .chat-messages {
+                padding: 20px 5%;
+            }
+
+            .input-container {
+                padding: 15px 5%;
+            }
+            .message {
+                max-width: 90%; /* Permitir que las burbujas sean un poco más anchas en móvil */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar d-none d-md-block">
+                <div class="d-flex flex-column align-items-center">
+                    <button class="new-chat-btn mb-4">
+                        <i class="fas fa-plus me-2"></i>Nuevo chat
+                    </button>
+
+                    <div class="w-100 px-2">
+                        <h6 class="text-white-50 small px-2 mb-2">Preguntas frecuentes</h6>
+                        <button class="sidebar-btn" data-question="¿Cómo resolver una ecuación cuadrática?">
+                            <i class="fas fa-calculator me-2"></i> Ecuaciones cuadráticas
+                        </button>
+                        <button class="sidebar-btn" data-question="¿Quién fue Simón Bolívar y qué hizo?">
+                            <i class="fas fa-landmark me-2"></i> Historia de Simón Bolívar
+                        </button>
+                        <button class="sidebar-btn" data-question="¿Qué temas salen más en el ICFES?">
+                            <i class="fas fa-clipboard-question me-2"></i> Temas del ICFES
+                        </button>
+                        <button class="sidebar-btn" data-question="¿Qué es una derivada en cálculo?">
+                            <i class="fas fa-square-root-variable me-2"></i> Derivadas
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <!-- Mobile Header -->
+                <div class="nav-top d-md-none">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn text-white" data-bs-toggle="collapse" data-bs-target="#mobileSidebar">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <span class="fw-bold">OmniChat</span>
+                        <button class="btn text-white">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Sidebar (Collapsed) -->
+                <div class="collapse" id="mobileSidebar">
+                    <div class="bg-dark p-3">
+                        <button class="new-chat-btn w-100">
+                            <i class="fas fa-plus me-2"></i>Nuevo chat
+                        </button>
+                        <div class="list-group">
+                            <button class="sidebar-btn w-100">
+                                <i class="fas fa-message me-2"></i>Chat sobre ML
+                            </button>
+                            <button class="sidebar-btn w-100">
+                                <i class="fas fa-message me-2"></i>Análisis de datos
+                            </button>
+                            <button class="sidebar-btn w-100">
+                                <i class="fas fa-message me-2"></i>Estadísticas avanzadas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <br><br><br>
+                <div id="chatBox" class="chat-messages">
+                    <div class="message bot-message">
+                        <div class="avatar bot-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+
+                        <div class="message-content">
+                            <p>¡Bienvenido al chat de Testnii con AI!?¿En que puedo ayudarte hoy?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <!-- Mensajes -->
+                    <div id="chatBox" class="chat-messages">
+                        <!-- Mensajes se agregan aquí -->
+                    </div>
+
+                    <!-- Input abajo -->
+                    <div class="input-container">
+                        <div class="position-relative">
+                            <textarea class="form-control chat-input" placeholder="Escribe un mensaje..."></textarea>
+                            <button class="send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Ajustar la altura del textarea al escribir
+        const textarea = document.querySelector(".chat-input");
+        textarea.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height =
+                (this.scrollHeight < 200 ? this.scrollHeight : 200) + "px";
+        });
+    </script>
+    <script>
+        const sendButton = document.querySelector(".send-btn");
+        const input = document.querySelector(".chat-input");
+        const chatBox = document.getElementById("chatBox");
+
+        async function appendMessage(sender, text) {
+            const isBot = sender === "bot";
+            const html = `
+      <div class="message ${isBot ? "bot-message" : "user-message"}">
+        <div class="avatar ${isBot ? "bot-avatar" : "user-avatar"}">
+          <i class="fas fa-${isBot ? "robot" : "user"}"></i>
+        </div>
+        <div class="message-content"><p>${text}</p></div>
+      </div>
+    `;
+            chatBox.innerHTML += html;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function handleMessage(message) {
+            if (!message) return;
+
+            // Mostrar mensaje del usuario
+            await appendMessage("user", message);
+
+            // Mostrar mensaje de carga
+            const loadingEl = document.createElement("div");
+            loadingEl.className = "message bot-message";
+            loadingEl.innerHTML = `
+      <div class="avatar bot-avatar"><i class="fas fa-robot"></i></div>
+      <div class="message-content"><p><em>Cargando respuesta...</em></p></div>
+    `;
+            chatBox.appendChild(loadingEl);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Llamar a Gemini
+            const response = await fetch("/chat/send/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message }),
+            });
+
+            const data = await response.json();
+            loadingEl.remove(); // Eliminar el "Cargando..."
+            await appendMessage("bot", data.reply);
+        }
+
+        sendButton.addEventListener("click", () => {
+            const message = input.value.trim();
+            input.value = "";
+            handleMessage(message);
+        });
+
+        // También para preguntas frecuentes del sidebar
+        document.querySelectorAll(".sidebar-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const question = btn.getAttribute("data-question");
+                handleMessage(question);
+            });
+        });
+    </script>
+
+    <script>
+        const sidebarButtons = document.querySelectorAll(".sidebar-btn");
+
+        sidebarButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const question = btn.getAttribute("data-question");
+                if (!question) return;
+
+                // Mostrar mensaje del usuario
+                chatBox.innerHTML += `
+        <div class="message user-message">
+          <div class="avatar user-avatar"><i class="fas fa-user"></i></div>
+          <div class="message-content"><p>${question}</p></div>
+        </div>
+      `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Llamar a Gemini
+                fetch("/chat/send/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: question }),
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        chatBox.innerHTML += `
+            <div class="message bot-message">
+              <div class="avatar bot-avatar"><i class="fas fa-robot"></i></div>
+              <div class="message-content"><p>${data.reply}</p></div>
+            </div>
+          `;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="shadow-wrap">
+  <div class="form-wrap">
+  <h3>Bienvenido/a de nuevo!!</h3>
+  <h4>Inicia sesion en tu usuario como profesor</h4>
+  <br>
+    <form method="POST">
+      {% csrf_token %}
+      <label for="id_username">Username:</label>
+      {{ form.username }}
+
+      <label for="id_password">Password:</label>
+      {{ form.password }}
+
+      <button type="submit">Enviar</button>
+    </form>
+    <a class="signup-link" href="{% url "base:authView" %}">Registrate</a>
+  </div>
+</div>
+{% endblock content %}

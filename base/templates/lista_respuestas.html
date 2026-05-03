@@ -1,0 +1,298 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Gestión de Respuestas
+{% endblock %}
+
+{% block page_content %}
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-1">Gestión de Respuestas</h2>
+      <p class="text-muted mb-0">Administra las opciones de respuesta para las preguntas</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-download"></i>
+        Exportar
+      </button>
+      <a href="{% url 'base:agregar_respuesta' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i>
+        Agregar Respuesta
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Total Respuestas</h6>
+              <h4 class="mb-0">{{ respuestas|length }}</h4>
+            </div>
+            <i class="bi bi-card-checklist opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Correctas</h6>
+              <h4 class="mb-0">{{ respuestas|length|floatformat:0|add:'0'|div:4 }}</h4>
+            </div>
+            <i class="bi bi-check-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Preguntas</h6>
+              <h4 class="mb-0">{{ respuestas|length|floatformat:0|add:'0'|div:4 }}+</h4>
+            </div>
+            <i class="bi bi-question-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Promedio por Pregunta</h6>
+              <h4 class="mb-0">4</h4>
+            </div>
+            <i class="bi bi-graph-up opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" placeholder="Buscar respuestas..." />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select">
+            <option>Todas las preguntas</option>
+            <option>Con respuestas</option>
+            <option>Sin respuestas</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select">
+            <option>Tipo</option>
+            <option>Correcta</option>
+            <option>Incorrecta</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select">
+            <option>Estado</option>
+            <option>Activa</option>
+            <option>Inactiva</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-outline-secondary w-100">
+            <i class="bi bi-arrow-clockwise"></i>
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Answers Table -->
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-card-checklist me-2"></i>
+          Lista de Respuestas ({{ respuestas|length }})
+        </h5>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-grid-3x3-gap"></i></button>
+          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    {% if respuestas %}
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" class="form-check-input" />
+                </th>
+                <th>Respuesta</th>
+                <th>Pregunta</th>
+                <th>Texto</th>
+                <th>Tipo</th>
+                <th>Orden</th>
+                <th>Fecha Creación</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for respuesta in respuestas %}
+                <tr>
+                  <td>
+                    <input type="checkbox" class="form-check-input" />
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle {% if respuesta.es_correcta %}
+                          
+                          bg-success
+
+                        {% else %}
+                          
+                          bg-secondary
+
+                        {% endif %} text-white me-3">
+                        {% if respuesta.es_correcta %}
+                          <i class="bi bi-check"></i>
+                        {% else %}
+                          <i class="bi bi-x"></i>
+                        {% endif %}
+                      </div>
+                      <div>
+                        <div class="fw-semibold">Opción {{ respuesta.id_respuesta }}</div>
+                        <small class="text-muted">ID: {{ respuesta.id_respuesta }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-sm">{{ respuesta.pregunta.pregunta|truncatechars:40|default:'N/A' }}</div>
+                  </td>
+                  <td>
+                    <div class="text-sm">{{ respuesta.texto|truncatechars:50 }}</div>
+                  </td>
+                  <td>
+                    {% if respuesta.es_correcta %}
+                      <span class="badge bg-success bg-opacity-25 text-success">Correcta</span>
+                    {% else %}
+                      <span class="badge bg-secondary bg-opacity-25 text-secondary">Incorrecta</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark">{{ respuesta.orden|default:'1' }}</span>
+                  </td>
+                  <td>
+                    <div>
+                      <div>{{ respuesta.fecha_creacion|date:'d/m/Y'|default:'N/A' }}</div>
+                      <small class="text-muted">Reciente</small>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-success">Activa</span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" title="Ver detalles"><i class="bi bi-eye"></i></button>
+                      <a href="{% url 'base:editar_respuesta' respuesta.id_respuesta %}" class="btn btn-sm btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                      <a href="{% url 'base:eliminar_respuesta' respuesta.id_respuesta %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta respuesta?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="text-muted">Mostrando 1-{{ respuestas|length }} de {{ respuestas|length }} respuestas</div>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled">
+                <span class="page-link">Anterior</span>
+              </li>
+              <li class="page-item active">
+                <span class="page-link">1</span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link">Siguiente</span>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    {% else %}
+      <!-- Empty State -->
+      <div class="card-body">
+        <div class="empty-state">
+          <i class="bi bi-card-checklist"></i>
+          <h4>No hay respuestas registradas</h4>
+          <p>Comienza agregando la primera respuesta al sistema.</p>
+          <a href="{% url 'base:agregar_respuesta' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>
+            Agregar Primera Respuesta
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .text-sm {
+      font-size: 0.875rem;
+    }
+    
+    .fw-medium {
+      font-weight: 500;
+    }
+    
+    .table th {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      color: #374151;
+    }
+    
+    .btn-group .btn {
+      border: 1px solid #dee2e6;
+    }
+    
+    .btn-group .btn:hover {
+      z-index: 2;
+    }
+  </style>
+{% endblock %}

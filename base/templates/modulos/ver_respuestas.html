@@ -1,0 +1,579 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Revisión de Respuestas - {{ tipo_simulacro|default:"Simulacro" }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      :root {
+        --primary-purple: #7c3aed;
+        --light-purple: #a78bfa;
+        --lighter-purple: #ede9fe;
+        --darker-purple: #5b21b6;
+        --secondary-teal: #14b8a6;
+        --light-teal: #5eead4;
+        --lighter-teal: #ccfbf1;
+        --text-on-teal: #ffffff;
+        --page-bg: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        --card-bg: #ffffff;
+        --card-border-subtle: #ddd6fe;
+        --text-primary-color: #1f2937;
+        --text-secondary-color: #6b7280;
+        --text-on-purple: #ffffff;
+        --shadow-color: rgba(91, 33, 182, 0.08);
+        --strong-shadow-color: rgba(91, 33, 182, 0.12);
+        --success-green-bg: #d1fae5; /* Fondo para respuestas correctas */
+        --success-green-text: #065f46; /* Texto para respuestas correctas */
+        --success-green-border: #10b981; /* Borde para respuestas correctas */
+        --danger-red-bg: #fee2e2;     /* Fondo para respuestas incorrectas */
+        --danger-red-text: #991b1b;   /* Texto para respuestas incorrectas */
+        --danger-red-border: #ef4444;  /* Borde para respuestas incorrectas */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--page-bg);
+        color: var(--text-primary-color);
+        margin: 0;
+        padding: 2rem 1rem;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+
+      .header-container {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .main-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        line-height: 1.1;
+      }
+      
+      .subtitle {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--secondary-teal);
+        margin-top: 0.5rem;
+      }
+
+      .answer-card {
+        background: var(--card-bg);
+        /* max-width: 800px; No es necesario si la columna lo controla */
+        margin: 0 auto 1.5rem auto; /* Centrado horizontal, margen inferior */
+        padding: 2rem;
+        border-radius: 20px; 
+        box-shadow: 0 8px 25px var(--strong-shadow-color);
+        border: 1px solid var(--card-border-subtle);
+        text-align: left;
+      }
+      
+      .answers-column .answer-card:last-child {
+        margin-bottom: 0;
+      }
+
+      .question-number {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-purple);
+        margin-bottom: 0.5rem;
+      }
+      
+      .question-text {
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: var(--text-primary-color);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+
+      .option-display {
+        padding: 1rem 1.25rem;
+        margin: 0.75rem 0;
+        border-radius: 12px; 
+        font-size: 1rem;
+        line-height: 1.5;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .option-display i {
+        font-size: 1.3rem;
+      }
+
+      .correct-answer {
+        background-color: var(--success-green-bg);
+        color: var(--success-green-text);
+        border: 1px solid var(--success-green-border);
+      }
+      .correct-answer i { color: var(--success-green-text); }
+
+      .incorrect-answer {
+        background-color: var(--danger-red-bg);
+        color: var(--danger-red-text);
+        border: 1px solid var(--danger-red-border);
+      }
+      .incorrect-answer i { color: var(--danger-red-text); }
+      
+      .user-answer-incorrect {
+        /* No se necesita estilo adicional por ahora */
+      }
+
+      .ai-correction-card {
+        background: linear-gradient(135deg, var(--lighter-purple), var(--card-bg));
+        border-left: 4px solid var(--secondary-teal);
+        padding: 2rem;
+        border-radius: 20px; /* Añadido para consistencia */
+        box-shadow: 0 8px 25px var(--strong-shadow-color); /* Añadido para consistencia */
+        border: 1px solid var(--card-border-subtle); /* Añadido para consistencia */
+      }
+      .ai-correction-card .question-text { /* Título Retroalimentación IA */
+        color: var(--darker-purple);
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .ai-correction-card .correction-content {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--text-primary-color);
+        /* white-space: pre-line; Eliminado, se maneja con párrafos <p> */
+      }
+       .ai-correction-card .correction-section-title {
+        font-weight: bold;
+        font-size: 1.1em;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+        color: var(--darker-purple);
+      }
+      .ai-correction-card .correction-section-title:first-child {
+          margin-top: 0;
+      }
+      
+      .info-message {
+          text-align: center;
+          font-size: 1.1rem;
+          color: var(--text-secondary-color);
+      }
+
+      #loading-message {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: var(--primary-purple);
+        margin: 3rem auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid var(--lighter-purple);
+        border-top-color: var(--primary-purple);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .action-buttons {
+        text-align: center;
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column; 
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .btn-modern {
+        text-decoration: none;
+        padding: 0.75rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%; 
+        max-width: 320px; 
+      }
+
+      .btn-primary {
+        background: var(--primary-purple);
+        color: var(--text-on-purple);
+      }
+      .btn-primary:hover {
+        background: var(--darker-purple);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px var(--strong-shadow-color);
+      }
+      
+      .btn-secondary {
+        background: var(--lighter-teal);
+        color: var(--secondary-teal);
+        border: 1px solid var(--secondary-teal);
+      }
+      .btn-secondary:hover {
+        background: var(--secondary-teal);
+        color: var(--text-on-teal);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(20, 184, 166, 0.2);
+      }
+      
+      .footer-text {
+        font-size: 0.8rem;
+        color: var(--text-secondary-color);
+        margin-top: 1rem; 
+        text-align: right;
+        padding-top: 1rem;
+        border-top: 1px solid var(--lighter-purple);
+      }
+      .global-footer {
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--text-secondary-color);
+        margin-top: 3rem;
+        padding-bottom: 1rem;
+      }
+
+      /* --- NUEVOS ESTILOS PARA LAYOUT DE DOS COLUMNAS --- */
+      .review-layout-container {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem; /* Espacio entre columnas */
+        align-items: flex-start; /* Alinear al inicio verticalmente */
+        max-width: 1200px; /* O el ancho máximo que prefieras para el contenido principal */
+        margin: 0 auto; /* Centrar el layout */
+      }
+
+      .answers-column {
+        flex: 1.8; /* Reducido de 2 para dar más espacio a la columna de correcciones */
+        min-width: 0; /* Para que flexbox maneje bien el overflow */
+        /* max-height: calc(100vh - 10rem); Altura máxima antes de hacer scroll. Ajustar según header/footer */
+        /* overflow-y: auto; Scroll para respuestas */
+        /* padding-right: 0.5rem; Pequeño padding para que el scrollbar no pegue al contenido */
+      }
+      
+      /* Para un mejor control del scroll de respuestas, limitamos su altura */
+      .answers-scroller {
+        max-height: calc(100vh - 12rem); /* Ajusta este valor según tu header/footer y padding de body */
+        overflow-y: auto;
+        padding-right: 1rem; /* Espacio para la barra de scroll */
+      }
+      .answers-scroller .answer-card {
+          max-width: 100%; /* Asegura que la card no se desborde */
+      }
+
+
+      .corrections-column {
+        flex: 1.5; /* Aumentado de 1.2 para hacerla más ancha */
+        min-width: 0; /* Para que flexbox maneje bien el overflow */
+        position: sticky;
+        top: 2rem; /* Distancia desde el top de la viewport cuando está sticky */
+        /* max-height: calc(100vh - 4rem); Ajustado para que el scroll interno de IA funcione bien */
+        /* overflow-y: auto; Scroll para la IA si su contenido es muy largo */
+      }
+      
+      /* Para un mejor control del scroll de la IA */
+      .corrections-scroller {
+          max-height: calc(100vh - 4rem); /* Ajusta 4rem según el 'top' y otros espaciados */
+          overflow-y: auto;
+      }
+      .corrections-scroller #loading-message {
+          margin-top: 0; /* Ajustar si es necesario */
+      }
+      .corrections-scroller #correcciones-container {
+          margin-top: 0; /* Ya no se necesita el margen superior aquí */
+      }
+
+
+      @media (min-width: 768px) { 
+        .action-buttons {
+          flex-direction: row;
+          justify-content: center;
+        }
+        .btn-modern {
+          width: auto;
+        }
+      }
+      
+      @media (max-width: 992px) { /* Breakpoint para apilar columnas */
+        .review-layout-container {
+          flex-direction: column;
+          gap: 2.5rem; /* Aumentar gap cuando están apiladas */
+        }
+
+        .answers-column,
+        .corrections-column {
+          flex: none; 
+          width: 100%;
+          position: static; /* Resetear sticky */
+          max-height: none; /* Resetear altura máxima */
+          overflow-y: visible; /* Resetear overflow */
+          padding-right: 0;
+        }
+        .answers-scroller, .corrections-scroller {
+            max-height: none;
+            overflow-y: visible;
+            padding-right: 0;
+        }
+        .corrections-column {
+            margin-top: 2rem; /* Espacio cuando la columna de correcciones está debajo */
+        }
+      }
+      
+      @media (max-width: 480px) {
+        body { padding: 1rem 0.5rem; }
+        /* .answer-card { padding: 1.5rem; } Ya es manejado por .answer-card globalmente */
+        .main-title { font-size: 2.2rem; }
+        /* .question-text { font-size: 1.05rem; } Ya es manejado por .question-text globalmente */
+        /* .option-display { padding: 0.8rem 1rem; font-size: 0.95rem; } Ya es manejado por .option-display */
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="header-container">
+      <div class="main-title">REVISIÓN DE RESPUESTAS</div>
+      {% if tipo_simulacro %}
+      <div class="subtitle">Simulacro de {{ tipo_simulacro }}</div>
+      {% endif %}
+    </div>
+
+    <div class="review-layout-container">
+        <div class="answers-column">
+            <div class="answers-scroller"> {# Nuevo div para el scroll de respuestas #}
+                {% if respuestas %}
+                  {% for r in respuestas %}
+                    <div class="answer-card">
+                      <div class="question-number">Pregunta {{ forloop.counter }}</div>
+                      <div class="question-text">{{ r.pregunta|safe }}</div>
+                      
+                      <div class="option-display {% if r.es_correcta %}correct-answer{% else %}incorrect-answer user-answer-incorrect{% endif %}">
+                        {% if r.es_correcta %}
+                          <i class="bi bi-check-circle-fill"></i>
+                        {% else %}
+                          <i class="bi bi-x-circle-fill"></i>
+                        {% endif %}
+                        <span>Tu respuesta: {{ r.respuesta_usuario|default:"No respondida" }}</span>
+                      </div>
+
+                      {% if not r.es_correcta %}
+                        <div class="option-display correct-answer">
+                          <i class="bi bi-check-circle-fill"></i>
+                          <span>Respuesta Correcta: {{ r.texto_respuesta_correcta_determinado }}</span>
+                        </div>
+                      {% endif %}
+                      <div class="footer-text">
+                        TestNii Learning
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="answer-card info-message">
+                    No hay respuestas para mostrar para este simulacro.
+                     <div class="footer-text">
+                        TestNii Learning
+                      </div>
+                  </div>
+                {% endif %}
+            </div> {# Fin de .answers-scroller #}
+        </div>
+
+        <div class="corrections-column">
+            <div class="corrections-scroller"> {# Nuevo div para el scroll de correcciones #}
+                <div id="loading-message" style="display: none;">
+                  <div class="spinner"></div>
+                  <span>Analizando tus respuestas con IA para darte una retroalimentación detallada...</span>
+                </div>
+                <div id="correcciones-container"> {# Eliminado el style="margin-top: 2rem;" #}
+                  <!-- Las correcciones de la IA se insertarán aquí -->
+                </div>
+            </div> {# Fin de .corrections-scroller #}
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{% url 'base:estudiante_home' %}" class="btn-modern btn-primary">
+            <i class="bi bi-house-door-fill"></i> Ir al Dashboard
+        </a>
+        {% if examen_id %}
+        <a href="{% url 'base:resultado_simulacro' examen_id=examen_id %}" class="btn-modern btn-secondary">
+            <i class="bi bi-clipboard-data-fill"></i> Ver Resumen
+        </a>
+        {% endif %}
+    </div>
+    
+    <div class="global-footer">
+        Powered by Apps Factory X
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const respuestasRaw = {{ respuestas_json|default:'[]'|safe }};
+        let respuestas = [];
+        try {
+            if (typeof respuestasRaw === 'string' && respuestasRaw.trim() !== '') {
+                respuestas = JSON.parse(respuestasRaw);
+            } else if (Array.isArray(respuestasRaw)) {
+                respuestas = respuestasRaw;
+            }
+        } catch (e) {
+            console.error("Error al parsear respuestas_json:", e, "Contenido de respuestas_json:", respuestasRaw);
+            respuestas = []; 
+        }
+        
+        const sendCorrectionsUrl = "{% url 'base:send_corrections' %}";
+        const csrfToken = "{{ csrf_token }}"; 
+        const examenId = "{{ examen_id|default:'' }}";
+        const correccionesContainer = document.getElementById('correcciones-container');
+        const loadingMessage = document.getElementById('loading-message');
+
+        console.log("Datos para correcciones:", {
+            respuestas: respuestas,
+            sendCorrectionsUrl: sendCorrectionsUrl,
+            csrfToken: csrfToken ? "Token Presente" : "Token AUSENTE",
+            examenId: examenId
+        });
+
+        const incorrectas = respuestas.filter(r => !r.es_correcta && r.respuesta_usuario);
+        console.log("Respuestas incorrectas para enviar a IA:", incorrectas);
+
+        if (incorrectas.length > 0) {
+          loadingMessage.style.display = 'flex';
+
+          fetch(sendCorrectionsUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({ incorrectas: incorrectas, examen_id: examenId })
+          })
+          .then(async res => {
+            const responseBody = await res.text(); 
+            console.log("Respuesta del servidor (raw):", responseBody);
+            console.log("Estado de la respuesta del servidor:", res.status);
+            if (!res.ok) {
+                let errorData = { message: `Error del servidor: ${res.status} ${res.statusText}` };
+                try {
+                    errorData = JSON.parse(responseBody); 
+                } catch (e) { /* Mantener el error genérico */ }
+                console.error("Error en la respuesta del servidor:", errorData);
+                throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+            }
+            try {
+                return JSON.parse(responseBody); 
+            } catch (e) {
+                console.error("Error al parsear la respuesta JSON del servidor:", e, "Cuerpo de la respuesta:", responseBody);
+                throw new Error("La respuesta del servidor no es un JSON válido.");
+            }
+          })
+          .then(data => {
+            loadingMessage.style.display = 'none';
+            console.log("Datos recibidos de la IA:", data);
+            if (data.correcciones && data.correcciones.trim() !== "") {
+              const lines = data.correcciones.split(/\r?\n/); // Manejar saltos de línea Windows y Unix
+              let resultHtml = "";
+              lines.forEach(line => {
+                let trimmedLine = line.trim();
+                if (!trimmedLine) { // Conservar párrafos vacíos si son intencionales (resultan en <p></p>)
+                    resultHtml += "<p></p>"; // O podrías hacer `return;` para saltarlos
+                    return;
+                }
+
+                let matchTitle = trimmedLine.match(/^\* \*\*(.*?)\*\*$/);
+                if (matchTitle) {
+                  resultHtml += `<div class="ai-correction-card correction-section-title"><strong>${matchTitle[1]}</strong></div>`;
+                  return; 
+                }
+                
+                let matchLabel = trimmedLine.match(/^\* (.*?): (.*)$/);
+                if (matchLabel) {
+                  let labelContent = matchLabel[2].replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                  resultHtml += `<p><strong>${matchLabel[1]}:</strong> ${labelContent}</p>`;
+                  return; 
+                }
+                
+                let matchLabelOnly = trimmedLine.match(/^\* (.*?):$/);
+                if (matchLabelOnly) {
+                    resultHtml += `<p><strong>${matchLabelOnly[1]}:</strong></p>`;
+                    return; 
+                }
+
+                resultHtml += `<p>${trimmedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
+              });
+
+              correccionesContainer.innerHTML = `
+                <div class="ai-correction-card">
+                  <div class="question-text">
+                    <i class="bi bi-lightbulb-fill"></i> Retroalimentación Detallada por IA:
+                  </div>
+                  <div class="correction-content">
+                    ${resultHtml}
+                  </div>
+                  <div class="footer-text">
+                    Análisis por IA de TestNii
+                  </div>
+                </div>
+              `;
+            } else {
+              console.log("No se recibieron correcciones de la IA o estaban vacías.");
+              correccionesContainer.innerHTML = `
+                <div class="answer-card info-message">
+                    <i class="bi bi-info-circle-fill" style="color: var(--secondary-teal); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                    <p>No se encontraron correcciones específicas de la IA para tus respuestas incorrectas.</p>
+                     <div class="footer-text">TestNii Learning</div>
+                </div>`;
+            }
+          })
+          .catch(err => {
+            loadingMessage.style.display = 'none';
+            console.error("Error en el proceso de fetch para correcciones:", err);
+            correccionesContainer.innerHTML = `
+                <div class="answer-card info-message" style="border-color: var(--danger-red-border); background-color: var(--danger-red-bg);">
+                    <i class="bi bi-exclamation-triangle-fill" style="color: var(--danger-red-text); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                    <p style="color: var(--danger-red-text); font-weight: 500;">Error al Cargar Retroalimentación</p>
+                    <p style="font-size:0.9rem; color: var(--text-secondary-color); margin-top: 0.5rem;">No pudimos obtener la retroalimentación de la IA en este momento. Detalles: ${err.message}</p>
+                    <p style="font-size:0.8rem; color: var(--text-secondary-color); margin-top: 1rem;">Por favor, revisa la consola del navegador para más detalles técnicos o inténtalo más tarde.</p>
+                     <div class="footer-text">TestNii Learning</div>
+                </div>`;
+          });
+        } else if (respuestas.length > 0) {
+            console.log("No hay respuestas incorrectas o no respondidas para enviar a la IA.");
+             correccionesContainer.innerHTML = `
+                <div class="answer-card info-message" style="border-color: var(--success-green-border); background-color: var(--success-green-bg);">
+                    <i class="bi bi-check-all" style="color: var(--success-green-text); font-size: 1.8rem; margin-bottom: 0.5rem;"></i>
+                    <p style="color: var(--success-green-text); font-weight:500;">¡Excelente! No hay respuestas incorrectas que necesiten corrección por IA, o todas tus respuestas fueron acertadas.</p>
+                     <div class="footer-text">TestNii Learning</div>
+                </div>`;
+        } else {
+            console.log("No hay respuestas en general para mostrar o analizar.");
+        }
+      });
+    </script>
+  </body>
+</html>

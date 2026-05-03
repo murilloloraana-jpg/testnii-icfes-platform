@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar Estudiante</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-dark-blue {
+            background-color: #10182F;
+            color: #FFF;
+            font-weight: 700;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .btn-dark-blue:hover {
+            background-color: #FFF;
+            color: #10182F;
+            border: 1px solid #10182F;
+        }
+        
+        .btn-outline-dark-blue {
+            background-color: #FFF;
+            color: #10182F;
+            font-weight: 700;
+            border: 1px solid #10182F;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .btn-outline-dark-blue:hover {
+            background-color: #10182F;
+            color: #FFF;
+        }
+        
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-body {
+            padding: 40px;
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center align-items-center vh-100 bg-light">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="text-center">Editar Estudiante</h3>
+                        <p class="text-center text-muted">Modifica la información y guarda los cambios</p>
+
+                        <form method="POST" class="mt-4">
+                            {% csrf_token %}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">Nombre:</label>
+                                    <input type="text" id="id_nombre" name="nombre" class="form-control" value="{{ form.nombre.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="apellido" class="form-label">Apellido:</label>
+                                    <input type="text" id="id_apellido" name="apellido" class="form-control" value="{{ form.apellido.value }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento:</label>
+                                    <input type="date" id="id_fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ form.fecha_nacimiento.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="genero" class="form-label">Género:</label>
+                                    <select id="genero" name="genero" class="form-select">
+                                         <option value="M" {% if form.genero.value == "M" %}selected{% endif %}>Masculino</option>
+                    <option value="F" {% if form.genero.value == "F" %}selected{% endif %}>Femenino</option>
+                    <option value="O" {% if form.genero.value == "O" %}selected{% endif %}>Otro</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="identificacion" class="form-label">Identificación:</label>
+                                    <input type="text" id="identificacion" name="identificacion" class="form-control" value="{{ form.identificacion.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="correo" class="form-label">Correo Electrónico:</label>
+                                    <input type="email" id="correo" name="correo" class="form-control" value="{{ form.correo.value }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="telefono" class="form-label">Teléfono:</label>
+                                    <input type="tel" id="telefono" name="telefono" class="form-control" value="{{ form.telefono.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="direccion" class="form-label">Dirección:</label>
+                                    <input type="text" id="direccion" name="direccion" class="form-control" value="{{ form.direccion.value }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="institucion" class="form-label">Institución:</label>
+                                    <input type="text" id="institucion" name="institucion" class="form-control" value="{{ form.institucion.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="tipo_institucion" class="form-label">Tipo de Institución:</label>
+                                    <select id="tipo_institucion" name="tipo_institucion" class="form-select">
+                                       <option value="Pública" {% if form.tipo_institucion.value == "Pública" %}selected{% endif %}>Pública</option>
+                    <option value="Privada" {% if form.tipo_institucion.value == "Privada" %}selected{% endif %}>Privada</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="grado" class="form-label">Grado:</label>
+                                    <input type="text" id="grado" name="grado" class="form-control" value="{{ form.grado.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="fecha_inscripcion" class="form-label">Fecha de Inscripción:</label>
+                                    <input type="datetime-local" id="fecha_inscripcion" name="fecha_inscripcion" class="form-control" value="{{ form.fecha_inscripcion.value }}">
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-dark-blue">Guardar Cambios</button>
+                                <a href="{% url 'base:home' %}" class="btn btn-outline-dark-blue">Volver</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

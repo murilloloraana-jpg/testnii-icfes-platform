@@ -1,0 +1,585 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel del Profesor - TestNii</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+      :root {
+        --primary-purple: #7c3aed;
+        --light-purple: #a78bfa;
+        --lighter-purple: #ede9fe;
+        --darker-purple: #5b21b6;
+        
+        --secondary-teal: #14b8a6; /* Teal principal */
+        --light-teal: #5eead4;    /* Teal claro */
+        --lighter-teal: #ccfbf1;  /* Teal muy pálido */
+
+        --accent-pink: #ec4899; /* Rosa para acentos o alertas suaves */
+        --light-pink: #fbcfe8;
+
+        --accent-amber: #f59e0b; /* Ámbar para acentos cálidos */
+        --light-amber: #fef3c7;
+
+        --page-bg: linear-gradient(135deg, #f3e8ff 0%, #e0f2fe 100%); /* Gradiente suave Lila a Azul claro */
+        --card-bg: #ffffff;
+        --card-border-subtle: #e0e7ff; /* Un borde azulado muy claro */
+        
+        --text-primary-color: #1f2937; /* Casi negro */
+        --text-secondary-color: #6b7280; /* Gris */
+        --text-on-primary: #ffffff; /* Texto sobre fondos oscuros/primarios */
+
+        --shadow-color: rgba(91, 33, 182, 0.06);
+        --strong-shadow-color: rgba(91, 33, 182, 0.12);
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--page-bg);
+        color: var(--text-primary-color);
+        margin: 0;
+      }
+
+      .sidebar {
+        height: 100vh;
+        background-color: var(--card-bg);
+        box-shadow: 3px 0 10px rgba(0,0,0,0.05);
+        position: fixed;
+        width: 260px; /* Un poco más ancho */
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        padding-top: 1.5rem;
+      }
+
+      .main-content {
+        margin-left: 260px;
+        padding: 2.5rem;
+      }
+
+      .profile-section {
+        padding: 1rem 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid var(--card-border-subtle);
+        margin-bottom: 1rem;
+      }
+
+      .profile-brand {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 1rem; /* Aumentado espacio */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .profile-brand i {
+        font-size: 2rem;
+      }
+
+      .profile-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--darker-purple);
+        margin-top: 0.5rem; /* Reducido espacio superior */
+      }
+      .profile-role {
+        font-size: 0.85rem;
+        color: var(--text-secondary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      .nav-link {
+        color: var(--text-secondary-color);
+        padding: 0.9rem 1.5rem;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        text-decoration: none;
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .nav-link:hover {
+        background-color: var(--lighter-purple);
+        color: var(--primary-purple);
+        border-left-color: var(--primary-purple);
+      }
+
+      .nav-link.active {
+        background-color: var(--lighter-purple);
+        color: var(--darker-purple);
+        font-weight: 600;
+        border-left-color: var(--darker-purple);
+      }
+      .nav-link.active .nav-icon {
+        color: var(--darker-purple);
+      }
+
+      .nav-icon {
+        margin-right: 1rem;
+        width: 22px;
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--light-purple);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 1.5rem;
+      }
+      
+      .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-logout {
+        background-color: var(--light-pink);
+        color: var(--accent-pink);
+        border: 1px solid var(--accent-pink);
+        width: 100%; /* Logout sigue siendo full-width */
+      }
+      .btn-logout:hover {
+        background-color: var(--accent-pink);
+        color: var(--text-on-primary);
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);
+      }
+
+      .btn-logout-sidebar {
+        background-color: transparent; /* Fondo transparente */
+        color: var(--text-secondary-color); /* Color de texto secundario */
+        border: 1px solid var(--card-border-subtle); /* Borde sutil */
+        width: 100%;
+        padding: 0.6rem 1rem; /* Padding más pequeño */
+        font-size: 0.9rem; /* Fuente más pequeña */
+        text-align: left; /* Alinear texto a la izquierda */
+      }
+      .btn-logout-sidebar:hover {
+        background-color: var(--lighter-pink); /* Un rosa muy claro al pasar el mouse */
+        color: var(--accent-pink);
+        border-color: var(--accent-pink);
+      }
+      .btn-logout-sidebar i {
+        margin-right: 0.8rem; /* Espacio entre icono y texto */
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem; /* Ajustado para consistencia */
+        margin-top: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-primary-color);
+        /* margin-bottom ya no es necesario aquí, se maneja en .page-header */
+      }
+
+      .btn-add-module-header {
+         background-color: var(--primary-purple);
+         color: var(--text-on-primary);
+         /* Estilos similares a otros btn-modern pero ajustados si es necesario */
+      }
+      .btn-add-module-header:hover {
+         background-color: var(--darker-purple);
+      }
+
+      .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+      .stat-card {
+        background-color: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .stat-card-icon {
+        font-size: 2rem;
+        padding: 0.8rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .stat-card-icon.icon-purple { background-color: var(--lighter-purple); color: var(--primary-purple); }
+      .stat-card-icon.icon-teal { background-color: var(--lighter-teal); color: var(--secondary-teal); }
+      .stat-card-icon.icon-amber { background-color: var(--light-amber); color: var(--accent-amber); }
+      
+      .stat-card-info h4 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: var(--text-primary-color);
+      }
+      .stat-card-info p {
+        font-size: 0.9rem;
+        margin: 0;
+        color: var(--text-secondary-color);
+      }
+
+      .modules-grid {
+        display: grid;
+        /* Intenta mostrar 2 columnas, cada una ocupando una fracción del espacio disponible */
+        /* Se ajustará a 1 columna en pantallas más pequeñas debido al minmax y el comportamiento de grid */
+        grid-template-columns: repeat(auto-fill, minmax(min(100%/2, max(280px, 100%/3)), 1fr));
+        gap: 2rem;
+      }
+
+      .module-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 1.8rem;
+        border: 1px solid var(--card-border-subtle);
+        box-shadow: 0 6px 15px var(--shadow-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .module-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 25px var(--strong-shadow-color);
+      }
+
+      .module-card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .module-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+      }
+
+      .module-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+      .module-subtitle {
+        font-size: 0.85rem;
+        color: var(--text-secondary-color);
+      }
+
+      .module-stats {
+        margin: 1.5rem 0;
+        padding: 1rem 0;
+        border-top: 1px dashed var(--card-border-subtle);
+        border-bottom: 1px dashed var(--card-border-subtle);
+        display: flex;
+        justify-content: space-around;
+        gap: 1rem;
+      }
+      .stat-item {
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary-color);
+        text-transform: uppercase;
+      }
+
+      .module-actions {
+        margin-top: auto; /* Empuja acciones al final */
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+      }
+
+      .btn-card-action {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        min-width: 120px;
+      }
+      
+      /* Esquemas de color para tarjetas de módulo */
+      .module-card.scheme-purple .module-icon-wrapper { background-color: var(--lighter-purple); color: var(--primary-purple); }
+      .module-card.scheme-purple .module-title { color: var(--primary-purple); }
+      .module-card.scheme-purple .stat-value { color: var(--primary-purple); }
+      .module-card.scheme-purple .btn-primary-card { background-color: var(--primary-purple); color: var(--text-on-primary);}
+      .module-card.scheme-purple .btn-secondary-card { border: 1px solid var(--primary-purple); color: var(--primary-purple);}
+      .module-card.scheme-purple .btn-secondary-card:hover { background-color: var(--lighter-purple); }
+
+      .module-card.scheme-teal .module-icon-wrapper { background-color: var(--lighter-teal); color: var(--secondary-teal); }
+      .module-card.scheme-teal .module-title { color: var(--secondary-teal); }
+      .module-card.scheme-teal .stat-value { color: var(--secondary-teal); }
+      .module-card.scheme-teal .btn-primary-card { background-color: var(--secondary-teal); color: var(--text-on-primary);}
+      .module-card.scheme-teal .btn-secondary-card { border: 1px solid var(--secondary-teal); color: var(--secondary-teal);}
+      .module-card.scheme-teal .btn-secondary-card:hover { background-color: var(--lighter-teal); }
+
+      .module-card.scheme-amber .module-icon-wrapper { background-color: var(--light-amber); color: var(--accent-amber); }
+      .module-card.scheme-amber .module-title { color: var(--accent-amber); }
+      .module-card.scheme-amber .stat-value { color: var(--accent-amber); }
+      .module-card.scheme-amber .btn-primary-card { background-color: var(--accent-amber); color: var(--text-primary-color);}
+      .module-card.scheme-amber .btn-secondary-card { border: 1px solid var(--accent-amber); color: var(--accent-amber);}
+      .module-card.scheme-amber .btn-secondary-card:hover { background-color: var(--light-amber); }
+      
+      .btn-danger-card {
+        background-color: var(--light-pink);
+        color: var(--accent-pink);
+        border: 1px solid var(--accent-pink);
+      }
+      .btn-danger-card:hover {
+        background-color: var(--accent-pink);
+        color: var(--text-on-primary);
+        box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+      }
+
+      .no-modules-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 3rem 2rem;
+        margin-top: 2rem;
+        text-align: center;
+        border: 2px dashed var(--card-border-subtle);
+      }
+      .no-modules-card i {
+        font-size: 3rem;
+        color: var(--light-purple);
+        margin-bottom: 1rem;
+      }
+      .no-modules-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-purple);
+        margin-bottom: 0.5rem;
+      }
+      .no-modules-text {
+        color: var(--text-secondary-color);
+        margin-bottom: 1.5rem;
+      }
+      .btn-add-module-empty {
+         background-color: var(--primary-purple);
+         color: var(--text-on-primary);
+         padding: 0.6rem 1.2rem; 
+         font-size: 0.9rem; 
+         width: auto; 
+         min-width: 200px;
+      }
+      .btn-add-module-empty:hover {
+         background-color: var(--darker-purple);
+      }
+
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 220px;
+        }
+        .main-content {
+          margin-left: 220px;
+          padding: 1.5rem;
+        }
+        .module-card {
+          padding: 1.5rem;
+        }
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          position: static; /* O transform translateX(-100%) para menú hamburguesa */
+          width: 100%;
+          height: auto;
+          box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        .main-content {
+          margin-left: 0;
+        }
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem; /* Espacio entre título y botón en móvil */
+        }
+        .modules-grid {
+            grid-template-columns: 1fr; /* Una sola columna en móviles */
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="profile-section">
+        <div class="profile-brand">
+          <i class="bi bi-mortarboard-fill"></i> TestNii
+        </div>
+        <h5 class="profile-name">{{ request.session.profesor_nombre|default:"Profesor" }}</h5>
+        <p class="profile-role">Panel de Profesor</p>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="{% url 'base:panel_profesor' %}" class="nav-link active">
+          <span class="nav-icon"><i class="bi bi-collection-fill"></i></span> Módulos
+        </a>
+        <a href="{% url 'base:ver_resultados_estudiantes_profesor' %}" class="nav-link">
+          <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Estudiantes
+        </a>
+        <a href="{% url 'base:editar_perfil_profesor' %}" class="nav-link">
+          <span class="nav-icon"><i class="bi bi-person-circle"></i></span> Perfil
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <form method="post" action="{% url 'base:logout_profesor' %}" style="width: 100%;">
+            {% csrf_token %}
+            <button type="submit" class="btn-modern btn-logout-sidebar">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="page-header">
+        <h1 class="section-title">Mis Módulos de Examen</h1>
+        <a href="{% url 'base:agregar_modulo' %}" class="btn-modern btn-add-module-header">
+          <i class="bi bi-plus-lg"></i> Crear Nuevo Módulo
+        </a>
+      </div>
+
+      <!-- Sección de Estadísticas -->
+      <div class="stats-section">
+        <div class="stat-card">
+          <div class="stat-card-icon icon-purple">
+            <i class="bi bi-collection-fill"></i>
+          </div>
+          <div class="stat-card-info">
+            <h4>{{ total_modulos_profesor }}</h4>
+            <p>Módulos Creados</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon icon-teal">
+            <i class="bi bi-file-earmark-text-fill"></i>
+          </div>
+          <div class="stat-card-info">
+            <h4>{{ total_preguntas_profesor }}</h4>
+            <p>Preguntas Totales</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon icon-amber">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <div class="stat-card-info">
+            <h4>{{ total_realizaciones_profesor }}</h4>
+            <p>Exámenes Realizados</p>
+          </div>
+        </div>
+      </div>
+      <!-- Fin Sección de Estadísticas -->
+
+      <div class="modules-grid">
+        {% for item in examenes_con_estilos %}
+        <div class="module-card {{ item.estilo.card_class }}">
+          <div class="module-card-header">
+            <div class="module-icon-wrapper">
+              <i class="{{ item.estilo.icon_class|default:'bi bi-file-earmark-text-fill' }}"></i>
+            </div>
+            <div>
+              <h3 class="module-title">{{ item.examen.tipo }}</h3>
+              <p class="module-subtitle">{{ item.examen.estado|default:"Activo" }}</p>
+            </div>
+          </div>
+          
+          <div class="module-stats">
+            <div class="stat-item">
+              <div class="stat-value">{{ item.examen.pregunta_set.count }}</div>
+              <div class="stat-label">Preguntas</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ item.examen.duracion|default:"N/A" }}</div>
+              <div class="stat-label">Minutos</div>
+            </div>
+             <div class="stat-item">
+              <div class="stat-value">{{ item.examen.resultados_count|default:0 }}</div>
+              <div class="stat-label">Realizados</div>
+            </div>
+          </div>
+
+          <div class="module-actions">
+            <a href="{% url 'base:editar_modulo' item.examen.id_examen %}" class="btn-modern btn-card-action btn-secondary-card">
+              <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            <a href="{% url 'base:ver_preguntas_modulo' item.examen.id_examen %}" class="btn-modern btn-card-action btn-secondary-card">
+              <i class="bi bi-card-list"></i> Ver Preguntas
+            </a>
+            <a href="{% url 'base:agregar_pregunta' item.examen.id_examen %}" class="btn-modern btn-card-action btn-primary-card">
+               <i class="bi bi-plus-circle-fill"></i> Preguntas
+            </a>
+            <form method="POST" action="{% url 'base:eliminar_modulo_completo' item.examen.id_examen %}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este módulo y todas sus preguntas? Esta acción no se puede deshacer.');">
+                {% csrf_token %}
+                <button type="submit" class="btn-modern btn-card-action btn-danger-card">
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+            </form>
+          </div>
+        </div>
+        {% empty %}
+         <!-- Este bloque se mostrará si no hay examenes_con_estilos -->
+        {% endfor %}
+      </div>
+      
+      {% if not examenes_con_estilos %}
+      <div class="no-modules-card">
+        <i class="bi bi-folder-x"></i>
+        <h3 class="no-modules-title">Aún no has creado módulos</h3>
+        <p class="no-modules-text">Comienza por agregar tu primer módulo de examen para tus estudiantes.</p>
+        <a href="{% url 'base:agregar_modulo' %}" class="btn-modern btn-add-module-empty">
+          <i class="bi bi-plus-lg"></i> Crear Nuevo Módulo
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll(".nav-link");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            // e.preventDefault(); // Prevenir navegación si son enlaces placeholder
+            // Comentado para permitir la navegación si los href son reales.
+            // Solo quitar clase activa de otros y ponerla en el actual si es necesario manejar estado visual aquí.
+            // Si los enlaces llevan a páginas diferentes, el estado activo se manejará por la plantilla de Django.
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

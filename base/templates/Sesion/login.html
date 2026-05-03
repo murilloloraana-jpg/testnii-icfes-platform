@@ -1,0 +1,429 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background-color: #f0f2f5;
+        /* Fallback background, page container will have its own */
+        color: #333;
+      }
+      
+      .auth-page-container {
+        display: flex;
+        flex-direction: column;
+        /* To stack panel and footer */
+        min-height: 100vh;
+        background-color: #e6e6fa;
+        /* Light lavender background for the whole page */
+        /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg stroke='%23000' stroke-width='66.7' stroke-opacity='0.05' %3E%3Ccircle fill='%236952ec' cx='0' cy='0' r='1800'/%3E%3Ccircle fill='%23634ce8' cx='0' cy='0' r='1700'/%3E%3Ccircle fill='%235c46e4' cx='0' cy='0' r='1600'/%3E%3Ccircle fill='%235640e0' cx='0' cy='0' r='1500'/%3E%3Ccircle fill='%234f3adc' cx='0' cy='0' r='1400'/%3E%3Ccircle fill='%234835d7' cx='0' cy='0' r='1300'/%3E%3Ccircle fill='%23422fd3' cx='0' cy='0' r='1200'/%3E%3Ccircle fill='%233b2acd' cx='0' cy='0' r='1100'/%3E%3Ccircle fill='%233424c9' cx='0' cy='0' r='1000'/%3E%3Ccircle fill='%232d1ec5' cx='0' cy='0' r='900'/%3E%3Ccircle fill='%232619c1' cx='0' cy='0' r='800'/%3E%3Ccircle fill='%231f13bd' cx='0' cy='0' r='700'/%3E%3Ccircle fill='%23180eb9' cx='0' cy='0' r='600'/%3E%3Ccircle fill='%231008b5' cx='0' cy='0' r='500'/%3E%3Ccircle fill='%230903b1' cx='0' cy='0' r='400'/%3E%3Ccircle fill='%230300ad' cx='0' cy='0' r='300'/%3E%3Ccircle fill='%230000a8' cx='0' cy='0' r='200'/%3E%3Ccircle fill='%230000a4' cx='0' cy='0' r='100'/%3E%3C/g%3E%3C/svg%3E"); */
+        /* background-size: cover; */
+        /* background-position: center; */
+        justify-content: center;
+        align-items: center;
+        /* Center panel horizontally */
+        padding: 20px;
+        /* Padding around the panel */
+      }
+      
+      .auth-panel {
+        display: flex;
+        width: 100%;
+        max-width: 960px;
+        /* Adjust as needed */
+        min-height: 500px;
+        /* Adjust as needed */
+        background-color: #fff;
+        border-radius: 25px;
+        /* From image */
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        /* Important for rounded corners on children */
+        flex-grow: 0;
+        /* Allow panel to grow if content is short */
+      }
+      
+      .auth-left-column {
+        background-color: #6952ec;
+        /* User's primary color */
+        color: #fff;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        /* Center content if it's narrower than column */
+        text-align: center;
+        border-top-left-radius: 25px;
+        border-bottom-left-radius: 25px;
+      }
+      
+      .auth-promo-title {
+        font-size: 2.2rem;
+        /* Adjust as needed */
+        font-weight: 600;
+        margin-bottom: 2rem;
+      }
+      
+      .auth-promo-image {
+        max-width: 80%;
+        /* Control image size within the column */
+        height: auto;
+        margin-bottom: 2rem;
+      }
+      
+      .auth-promo-benefits {
+        display: flex;
+        justify-content: space-around;
+        /* Space out benefit items */
+        width: 100%;
+        margin-top: 2rem;
+      }
+      
+      .benefit-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 120px;
+        /* Control width of benefit items */
+      }
+      
+      .benefit-icon {
+        font-size: 1.8rem;
+        /* Adjust icon size */
+        margin-bottom: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        /* Subtle background for icon */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .benefit-item p {
+        font-size: 0.85rem;
+        font-weight: 300;
+        line-height: 1.3;
+      }
+      
+      .auth-right-column {
+        background-color: #fff;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-top-right-radius: 25px;
+        border-bottom-right-radius: 25px;
+      }
+      
+      .auth-form-wrapper {
+        width: 100%;
+        max-width: 400px;
+        /* Control form width */
+        margin: 0 auto;
+        /* Center form in the column */
+      }
+      
+      .auth-form-title {
+        font-size: 2rem;
+        /* From image */
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+      
+      .auth-form-subtitle {
+        font-size: 0.9rem;
+        /* From image */
+        margin-bottom: 2rem;
+      }
+      
+      .auth-form-subtitle a {
+        color: #6952ec;
+        font-weight: 500;
+        text-decoration: none;
+      }
+      
+      .auth-form-subtitle a:hover {
+        text-decoration: underline;
+      }
+      
+      .auth-form-input {
+        background-color: transparent;
+        border: none;
+        border-bottom: 2px solid #e0e0e0;
+        /* Line style from image */
+        border-radius: 0;
+        padding: 0.5rem 0;
+        /* Adjust padding for line style */
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease-in-out;
+      }
+      
+      .auth-form-input:focus {
+        box-shadow: none;
+        border-color: #6952ec;
+        /* User's primary color on focus */
+      }
+      
+      .form-check-input {
+        border-color: #adb5bd;
+      }
+      
+      .form-check-input:checked {
+        background-color: #6952ec;
+        border-color: #6952ec;
+      }
+      
+      .form-check-label {
+        font-size: 0.85rem;
+      }
+      
+      .auth-submit-btn {
+        background-color: #6952ec;
+        /* User's primary color */
+        color: #fff;
+        font-weight: 500;
+        font-size: 1rem;
+        padding: 0.75rem;
+        border-radius: 25px;
+        /* Pill shape from image */
+        border: none;
+        transition: background-color 0.2s ease-in-out;
+      }
+      
+      .auth-submit-btn:hover {
+        background-color: #5b45d0;
+        /* Darker shade */
+      }
+      
+      .or-divider-new {
+        font-size: 0.85rem;
+        color: #adb5bd;
+      }
+      
+      .social-login-buttons-new {
+        margin-bottom: 1.5rem;
+      }
+      
+      .social-btn-new {
+        width: 45px;
+        /* Circular buttons */
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid #e0e0e0;
+        background-color: #fff;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      }
+      
+      .social-btn-new img {
+        width: 24px;
+        /* Adjust icon size inside button */
+        height: 24px;
+      }
+      
+      .social-btn-new:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Specific social button colors could be added if desired */
+      
+      /* .social-facebook { border-color: #3b5998; } */
+      
+      /* .social-google { border-color: #db4437; } */
+      
+      /* .social-apple { border-color: #000000; } */
+      
+      .auth-footer {
+        width: 100%;
+        max-width: 1100px;
+        /* Match panel width */
+        margin-top: 20px;
+        /* Space between panel and footer */
+        color: #6c757d;
+        /* Muted text color for footer */
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+      
+      /* Responsive Adjustments */
+      
+      @media (max-width: 991.98px) {
+        /* lg breakpoint */
+        .auth-panel {
+          flex-direction: column;
+          min-height: auto;
+          /* Allow height to adjust to content */
+          margin: 20px;
+          /* Add margin for panel on smaller screens */
+          max-width: 600px;
+          /* Adjust max-width for stacked layout */
+        }
+        .auth-left-column,
+        .auth-right-column {
+          border-radius: 0;
+          /* Remove specific border radius when stacked */
+          padding: 30px;
+        }
+        .auth-left-column {
+          border-top-left-radius: 25px;
+          border-top-right-radius: 25px;
+          /* Round top corners when stacked */
+          border-bottom-left-radius: 0;
+        }
+        .auth-right-column {
+          border-bottom-left-radius: 25px;
+          border-bottom-right-radius: 25px;
+          /* Round bottom corners when stacked */
+        }
+        .auth-promo-title {
+          font-size: 1.8rem;
+        }
+        .auth-promo-benefits {
+          flex-direction: column;
+          /* Stack benefits on smaller screens */
+          align-items: center;
+        }
+        .benefit-item {
+          margin-bottom: 1.5rem;
+        }
+        .benefit-item:last-child {
+          margin-bottom: 0;
+        }
+        .auth-form-wrapper {
+          max-width: none;
+          /* Allow form to take full width */
+        }
+        .auth-footer {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+      }
+      
+      @media (max-width: 575.98px) {
+        /* sm breakpoint */
+        .auth-left-column,
+        .auth-right-column {
+          padding: 25px;
+        }
+        .auth-promo-title {
+          font-size: 1.5rem;
+        }
+        .benefit-icon {
+          font-size: 1.5rem;
+          width: 40px;
+          height: 40px;
+        }
+        .benefit-item p {
+          font-size: 0.8rem;
+        }
+        .auth-form-title {
+          font-size: 1.6rem;
+        }
+        .social-btn-new {
+          width: 40px;
+          height: 40px;
+        }
+        .social-btn-new img {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-page-container">
+      <div class="auth-panel">
+        <div class="row g-0 h-100">
+          <!-- Columna Izquierda - Promocional -->
+          <div class="col-lg-6 auth-left-column">
+            <div class="auth-promo-content">
+              <h1 class="auth-promo-title">APRENDE A PROGRAMAR CON NOSOTROS.</h1>
+              <img src="{% static 'img/sesion.png' %}" alt="Aprende a programar" class="auth-promo-image img-fluid my-4" />
+              <div class="auth-promo-benefits">
+                <div class="benefit-item">
+                  <span class="benefit-icon">📖</span>
+                  <p>Aprende a programar</p>
+                </div>
+                <div class="benefit-item">
+                  <span class="benefit-icon">💡</span>
+                  <p>Adquiere una nueva habilidad</p>
+                </div>
+                <div class="benefit-item">
+                  <span class="benefit-icon">💼</span>
+                  <p>Consigue un nuevo trabajo</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha - Formulario -->
+          <div class="col-lg-6 auth-right-column">
+            <div class="auth-form-wrapper">
+              <h2 class="auth-form-title">Login</h2>
+              <p class="auth-form-subtitle text-muted mb-4">
+                ¿No tienes una cuenta?
+                <a href="{% url 'base:signup_estudiante' %}">Crea tu cuenta</a>
+              </p>
+
+              {% if error %}
+                <div class="alert alert-danger p-2 mb-3" style="font-size: 0.85rem">{{ error }}</div>
+              {% endif %}
+
+              <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="correo" class="form-label">Usuario o Correo electrónico</label>
+                  <input type="email" name="correo" id="correo" class="form-control auth-form-input" required />
+                </div>
+                <div class="mb-4">
+                  <label for="password" class="form-label">Contraseña</label>
+                  <input type="password" name="password" id="password" class="form-control auth-form-input" required />
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe" />
+                    <label class="form-check-label" for="rememberMe">Recuérdame</label>
+                  </div>
+                  <a href="#" class="small text-decoration-none">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn auth-submit-btn w-100">Login</button>
+              </form>
+
+              <p class="text-center text-muted my-4 or-divider-new">O inicia sesión con</p>
+
+              <div class="social-login-buttons-new d-flex justify-content-center gap-3">
+                <button class="btn social-btn-new social-facebook"><img src="https://img.icons8.com/fluency/30/facebook-new.png" alt="Facebook" /></button>
+                <button class="btn social-btn-new social-google"><img src="https://img.icons8.com/color/30/google-logo.png" alt="Google" /></button>
+                <button class="btn social-btn-new social-apple"><img src="https://img.icons8.com/ios-filled/30/mac-os.png" alt="Apple" style="filter: invert(100%) brightness(150%)" /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="auth-footer text-center py-3">
+        <p class="mb-0">CUALQUIERA QUE SEA TU OBJETIVO - TE AYUDAREMOS A LLEGAR ALLÍ</p>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simulacro - {{ tipo }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      :root {
+        --primary-purple: #7c3aed;
+        --light-purple: #a78bfa;
+        --lighter-purple: #ede9fe;
+        --darker-purple: #5b21b6;
+        --secondary-teal: #14b8a6;
+        --light-teal: #5eead4;
+        --lighter-teal: #ccfbf1;
+        --text-on-teal: #ffffff;
+        --page-bg: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        --card-bg: #ffffff;
+        --card-border-subtle: #ddd6fe;
+        --text-primary-color: #1f2937;
+        --text-secondary-color: #6b7280;
+        --text-on-purple: #ffffff;
+        --shadow-color: rgba(91, 33, 182, 0.08);
+        --strong-shadow-color: rgba(91, 33, 182, 0.12);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--page-bg);
+        margin: 0;
+        padding: 2rem 1rem;
+        color: var(--text-primary-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .header-container {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .main-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 0.25rem;
+      }
+
+      .subtitle {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--secondary-teal);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+
+      .timer {
+        display: inline-block;
+        font-size: 1.75rem;
+        color: var(--darker-purple);
+        font-weight: 700;
+        background: var(--lighter-purple);
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        border: 1px solid var(--primary-purple);
+        box-shadow: 0 4px 10px var(--shadow-color);
+      }
+
+      .simulacro-container {
+        max-width: 800px;
+        width: 100%;
+        background: var(--card-bg);
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px var(--strong-shadow-color);
+        border: 1px solid var(--card-border-subtle);
+      }
+
+      .question-header {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-purple);
+        margin-bottom: 0.5rem;
+      }
+      
+      .question-subheader {
+        font-size: 0.9rem;
+        color: var(--text-secondary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      .question-text {
+        margin-bottom: 2rem;
+        line-height: 1.7;
+        font-size: 1.1rem;
+        text-align: justify;
+        color: var(--text-primary-color);
+      }
+
+      .options-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .option {
+        display: block;
+        background: var(--lighter-purple);
+        padding: 1.25rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+        font-size: 1rem;
+        color: var(--text-primary-color);
+      }
+
+      .option:hover {
+        background: var(--light-purple);
+        color: var(--text-on-purple);
+        border-color: var(--primary-purple);
+        transform: translateY(-3px);
+      }
+
+      .option input[type="radio"] {
+        margin-right: 0.75rem;
+        transform: scale(1.2);
+        accent-color: var(--primary-purple);
+      }
+      
+      .option input[type="radio"]:checked + span {
+        font-weight: 600;
+      }
+      
+      .option.selected {
+        background: var(--primary-purple);
+        color: var(--text-on-purple);
+        border-color: var(--darker-purple);
+      }
+      .option.selected span{
+        font-weight: 600;
+      }
+
+
+      .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--card-border-subtle);
+      }
+
+      .btn-modern {
+        text-decoration: none;
+        padding: 0.75rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-prev {
+        background: var(--lighter-teal);
+        color: var(--secondary-teal);
+        border: 1px solid var(--secondary-teal);
+      }
+
+      .btn-prev:hover {
+        background: var(--secondary-teal);
+        color: var(--text-on-teal);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(20, 184, 166, 0.2);
+      }
+
+      .btn-next {
+        background: var(--primary-purple);
+        color: var(--text-on-purple);
+      }
+
+      .btn-next:hover {
+        background: var(--darker-purple);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px var(--strong-shadow-color);
+      }
+      
+      .btn-finish {
+        background: var(--secondary-teal);
+        color: var(--text-on-teal);
+      }
+
+      .btn-finish:hover {
+        background: #0D9488; /* Un teal más oscuro para hover */
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(20, 184, 166, 0.3);
+      }
+
+
+      .footer {
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--text-secondary-color);
+        margin-top: 3rem;
+      }
+
+      @media (max-width: 768px) {
+        body { padding: 1rem; }
+        .simulacro-container { padding: 1.5rem; }
+        .main-title { font-size: 2rem; }
+        .subtitle { font-size: 1rem; }
+        .timer { font-size: 1.5rem; padding: 0.5rem 1.25rem; }
+        .question-header { font-size: 1.25rem; }
+        .question-text { font-size: 1rem; }
+        .option { padding: 1rem; font-size: 0.95rem; }
+        .nav-buttons { flex-direction: column; gap: 1rem; }
+        .btn-modern { width: 100%; justify-content: center; }
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="header-container">
+      <div class="main-title">SIMULACRO</div>
+      <div class="subtitle">{{ tipo|upper }}</div>
+      <div id="timer" class="timer">00:00:00</div>
+    </div>
+
+    <div class="simulacro-container">
+      <h2 class="question-header">Pregunta {{ pregunta_index|add:1 }}</h2>
+      <p class="question-subheader">de {{ total_preguntas }}</p>
+
+
+      <p class="question-text">{{ pregunta.enunciado|safe }}</p>
+
+      <form
+        class="options-form"
+        method="post"
+        action="{% url 'base:simulacro' examen_id=examen_id pregunta_index=pregunta_index %}"
+      >
+        {% csrf_token %} 
+        {% for opcion in opciones %}
+        <label class="option" onclick="selectOption(this)">
+          <input 
+            type="radio" 
+            name="respuesta" 
+            value="{{ opcion }}" 
+            {% if respuesta_previa == opcion %}checked{% endif %}
+            required 
+          />
+          <span>{{ opcion }}</span>
+        </label>
+        {% endfor %}
+
+        <div class="nav-buttons">
+          {% if pregunta_index > 0 %}
+            <button type="submit" name="accion" value="anterior" class="btn-modern btn-prev">
+              <i class="bi bi-arrow-left-circle"></i> Anterior
+            </button>
+          {% else %}
+            <span></span> 
+          {% endif %}
+          
+          {% if pregunta_index < total_preguntas|add:'-1' %}
+            <button type="submit" name="accion" value="siguiente" class="btn-modern btn-next">
+              Siguiente <i class="bi bi-arrow-right-circle"></i>
+            </button>
+          {% else %}
+            <button type="submit" name="accion" value="finalizar" class="btn-modern btn-finish">
+              Finalizar Simulacro <i class="bi bi-check-circle-fill"></i>
+            </button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <div class="footer">
+      TestNii Learning | Powered by Apps Factory X
+    </div>
+
+    <script>
+      let timerElement = document.getElementById("timer");
+      let seconds = 0; // Podrías inicializar esto con un valor almacenado si el simulacro se puede pausar/reanudar
+
+      function updateTimer() {
+        seconds++;
+        let h = String(Math.floor(seconds / 3600)).padStart(2, "0");
+        let m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+        let s = String(seconds % 60).padStart(2, "0");
+        timerElement.textContent = `${h}:${m}:${s}`;
+      }
+      setInterval(updateTimer, 1000);
+
+      function selectOption(labelElement) {
+        // Remover clase 'selected' de todas las opciones
+        document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        // Añadir clase 'selected' a la opción clickeada
+        labelElement.classList.add('selected');
+        // Marcar el input radio correspondiente (opcional, ya que el label lo hace)
+        // labelElement.querySelector('input[type="radio"]').checked = true;
+      }
+      
+      // Si hay una respuesta previa, marcarla como seleccionada al cargar la página
+      document.addEventListener('DOMContentLoaded', function() {
+        const checkedRadio = document.querySelector('input[type="radio"][name="respuesta"]:checked');
+        if (checkedRadio) {
+          checkedRadio.closest('.option').classList.add('selected');
+        }
+      });
+    </script>
+  </body>
+</html>

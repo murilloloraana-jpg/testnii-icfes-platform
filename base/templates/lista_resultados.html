@@ -1,0 +1,366 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Gestión de Resultados
+{% endblock %}
+
+{% block page_content %}
+  <!-- Page Header --><br><br><br><br><br><br><br><br><br>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-1">Gestión de Resultados</h2>
+      <p class="text-muted mb-0">Administra los resultados de exámenes y evaluaciones</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-download"></i>
+        Exportar
+      </button>
+      <a href="{% url 'base:agregar_resultado' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i>
+        Agregar Resultado
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Total Resultados</h6>
+              <h4 class="mb-0">{{ total_resultados_filtrados }}</h4>
+            </div>
+            <i class="bi bi-clipboard-data opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Aprobados</h6>
+              <h4 class="mb-0">{{ count_aprobados }}</h4>
+            </div>
+            <i class="bi bi-check-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Promedio General</h6>
+              <h4 class="mb-0">{{ promedio_general_calculado|floatformat:1 }}</h4>
+            </div>
+            <i class="bi bi-graph-up opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Exámenes Únicos</h6>
+              <h4 class="mb-0">{{ examenes_unicos_count }}</h4>
+            </div>
+            <i class="bi bi-clipboard-check-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+        <form method="get" action="{% url 'base:listar_resultados' %}">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="q" placeholder="Buscar por estudiante o examen..." value="{{ query_busqueda_actual }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="estudiante_id">
+                        <option value="" {% if not estudiante_filter_actual %}selected{% endif %}>Todos los estudiantes</option>
+                        {% for est in todos_estudiantes %}
+                            <option value="{{ est.id_estudiante }}" {% if estudiante_filter_actual == est.id_estudiante|stringformat:"s" %}selected{% endif %}>{{ est.nombre }} {{ est.apellido }} ({{ est.identificacion }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="examen_tipo">
+                        <option value="Todos los exámenes" {% if examen_filter_actual == 'Todos los exámenes' %}selected{% endif %}>Todos los exámenes</option>
+                        {% for tipo_ex in tipos_examen_existentes %}
+                            <option value="{{ tipo_ex }}" {% if examen_filter_actual == tipo_ex %}selected{% endif %}>{{ tipo_ex }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="calificacion">
+                        <option value="Calificación" {% if calificacion_filter_actual == 'Calificación' %}selected{% endif %}>Calificación</option>
+                        <option value="Aprobado" {% if calificacion_filter_actual == 'Aprobado' %}selected{% endif %}>Aprobado (≥{{ UMBRAL_APROBACION }})</option>
+                        <option value="Reprobado" {% if calificacion_filter_actual == 'Reprobado' %}selected{% endif %}>Reprobado (<{{ UMBRAL_APROBACION }})</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+                    <a href="{% url 'base:listar_resultados' %}" class="btn btn-outline-secondary w-100" title="Limpiar filtros">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+
+  <!-- Results Table -->
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-clipboard-data me-2"></i>
+          Lista de Resultados ({{ resultados.paginator.count }})
+        </h5>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary" title="Vista Cuadrícula (Próximamente)"><i class="bi bi-grid-3x3-gap"></i></button>
+          <button class="btn btn-sm btn-outline-secondary active" title="Vista Lista"><i class="bi bi-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    {% if resultados.object_list %}
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" class="form-check-input" id="selectAllResultados" />
+                </th>
+                <th>Estudiante</th>
+                <th>Examen (Tipo)</th>
+                <th>Puntaje Global</th>
+                <th>Progreso (%)</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for resultado in resultados %}
+                <tr>
+                  <td>
+                    <input type="checkbox" class="form-check-input" name="resultado_id" value="{{ resultado.id_resultado }}"/>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle bg-primary text-white me-3">{{ resultado.estudiante.nombre|first|upper }}{{ resultado.estudiante.apellido|first|upper }}</div>
+                      <div>
+                        <div class="fw-semibold">{{ resultado.estudiante.nombre }} {{ resultado.estudiante.apellido }}</div>
+                        <small class="text-muted">ID: {{ resultado.estudiante.identificacion }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="fw-medium">{{ resultado.examen.tipo|default:'N/A' }}</div>
+                      <small class="text-muted">ID Examen: {{ resultado.examen.id_examen }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <span class="fw-bold me-2 
+                        {% if resultado.puntaje_global >= UMBRAL_APROBACION %}text-success
+                        {% elif resultado.puntaje_global >= UMBRAL_APROBACION|add:'-20' %}text-primary {# Un umbral intermedio para 'bien' #}
+                        {% elif resultado.puntaje_global >= UMBRAL_APROBACION|add:'-40' %}text-warning {# Un umbral para 'regular' #}
+                        {% else %}text-danger
+                        {% endif %}">
+                        {{ resultado.puntaje_global|floatformat:0 }}
+                      </span>
+                      {# Asumiendo que puntaje_global es 0-100 para el /100 implícito #}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="progress" style="height: 20px;" title="{{ resultado.puntaje_global|floatformat:0 }}%">
+                      <div class="progress-bar 
+                        {% if resultado.puntaje_global >= UMBRAL_APROBACION %}bg-success
+                        {% elif resultado.puntaje_global >= UMBRAL_APROBACION|add:'-20' %}bg-primary
+                        {% elif resultado.puntaje_global >= UMBRAL_APROBACION|add:'-40' %}bg-warning
+                        {% else %}bg-danger
+                        {% endif %}"
+                        role="progressbar"
+                        style="width: {{ resultado.puntaje_global }}%;" 
+                        aria-valuenow="{{ resultado.puntaje_global|floatformat:0 }}" 
+                        aria-valuemin="0" ria-valuemax="100">{{ resultado.puntaje_global|floatformat:0 }}%</div>
+                    </div>
+                  </td>
+                  <td>
+                    {% if resultado.puntaje_global >= UMBRAL_APROBACION %}
+                      <span class="badge bg-success">Aprobado</span>
+                    {% else %}
+                      <span class="badge bg-danger">Reprobado</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div>
+                      <div>{{ resultado.fecha_resultado|date:'d/m/Y' }}</div>
+                      <small class="text-muted">{{ resultado.fecha_resultado|time:'H:i' }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" title="Ver detalles (Próximamente)"><i class="bi bi-eye"></i></button>
+                      <a href="{% url 'base:editar_resultado' resultado.id_resultado %}" class="btn btn-sm btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                      <a href="{% url 'base:eliminar_resultado' resultado.id_resultado %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar el resultado de {{ resultado.estudiante.nombre }} {{ resultado.estudiante.apellido }} para el examen {{ resultado.examen.tipo }}?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="text-muted">Mostrando {{ resultados.start_index }}-{{ resultados.end_index }} de {{ resultados.paginator.count }} resultados</div>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              {% if resultados.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page=1&q={{ query_busqueda_actual }}&estudiante_id={{ estudiante_filter_actual }}&examen_tipo={{ examen_filter_actual }}&calificacion={{ calificacion_filter_actual }}">Primera</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ resultados.previous_page_number }}&q={{ query_busqueda_actual }}&estudiante_id={{ estudiante_filter_actual }}&examen_tipo={{ examen_filter_actual }}&calificacion={{ calificacion_filter_actual }}">Anterior</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Primera</span></li>
+                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+              {% endif %}
+
+              {% for num in resultados.paginator.page_range %}
+                {% if resultados.number == num %}
+                  <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > resultados.number|add:'-3' and num < resultados.number|add:'3' %}
+                  <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ query_busqueda_actual }}&estudiante_id={{ estudiante_filter_actual }}&examen_tipo={{ examen_filter_actual }}&calificacion={{ calificacion_filter_actual }}">{{ num }}</a></li>
+                {% endif %}
+              {% endfor %}
+
+              {% if resultados.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ resultados.next_page_number }}&q={{ query_busqueda_actual }}&estudiante_id={{ estudiante_filter_actual }}&examen_tipo={{ examen_filter_actual }}&calificacion={{ calificacion_filter_actual }}">Siguiente</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ resultados.paginator.num_pages }}&q={{ query_busqueda_actual }}&estudiante_id={{ estudiante_filter_actual }}&examen_tipo={{ examen_filter_actual }}&calificacion={{ calificacion_filter_actual }}">Última</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                <li class="page-item disabled"><span class="page-link">Última</span></li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    {% else %}
+      <!-- Empty State -->
+      <div class="card-body">
+        <div class="empty-state text-center py-5">
+            <i class="bi bi-emoji-frown fs-1 text-muted mb-3"></i>
+            <h4>No se encontraron resultados</h4>
+            <p class="text-muted">
+                {% if query_busqueda_actual or estudiante_filter_actual or examen_filter_actual != 'Todos los exámenes' or calificacion_filter_actual != 'Calificación' %}
+                    Intenta ajustar los filtros o revisa el término de búsqueda.
+                    <br>
+                    <a href="{% url 'base:listar_resultados' %}" class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
+                    </a>
+                {% else %}
+                    Los resultados aparecerán aquí cuando los estudiantes completen los exámenes.
+                    <br>
+                    <a href="{% url 'base:agregar_resultado' %}" class="btn btn-primary mt-2">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Registrar Nuevo Resultado
+                    </a>
+                {% endif %}
+            </p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem; /* Mantener o ajustar según preferencia */
+      text-transform: uppercase;
+    }
+    
+    .text-sm {
+      font-size: 0.875rem;
+    }
+    
+    .fw-medium {
+      font-weight: 500;
+    }
+    
+    .table th {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      color: #374151;
+    }
+    
+    .btn-group .btn {
+      border: 1px solid #dee2e6;
+    }
+    .btn-group .btn:not(:last-child) {
+        border-right: 0;
+    }
+    
+    .btn-group .btn:hover {
+      z-index: 2;
+    }
+    
+    .progress {
+      border-radius: 0.375rem; /* Bootstrap default for .rounded */
+      background-color: #e9ecef; /* Un fondo más claro para la barra de progreso */
+    }
+    .progress-bar {
+        font-size: 0.75rem; /* Para que el texto dentro de la barra sea legible */
+        font-weight: 500;
+    }
+    .empty-state i {
+        font-size: 3rem; 
+    }
+    .empty-state h4 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.35em 0.65em;
+    }
+  </style>
+{% endblock %}

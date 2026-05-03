@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar Resultado</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-dark-blue {
+            background-color: #10182F;
+            color: #FFF;
+            font-weight: 700;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .btn-dark-blue:hover {
+            background-color: #FFF;
+            color: #10182F;
+            border: 1px solid #10182F;
+        }
+        
+        .btn-outline-dark-blue {
+            background-color: #FFF;
+            color: #10182F;
+            font-weight: 700;
+            border: 1px solid #10182F;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .btn-outline-dark-blue:hover {
+            background-color: #10182F;
+            color: #FFF;
+        }
+        
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-body {
+            padding: 40px;
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center align-items-center vh-100 bg-light">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="text-center">Editar Resultado</h3>
+                        <p class="text-center text-muted">Modifica la información del resultado y guarda los cambios</p>
+
+                        <form method="POST" class="mt-4">
+                            {% csrf_token %}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="estudiante" class="form-label">Estudiante:</label> {{ form.estudiante }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="examen" class="form-label">Examen:</label> {{ form.examen }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="puntaje_global" class="form-label">Puntaje Global:</label>
+                                    <input type="number" id="puntaje_global" name="puntaje_global" class="form-control" value="{{ form.puntaje_global.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lectura_critica" class="form-label">Lectura Crítica:</label>
+                                    <input type="number" id="lectura_critica" name="lectura_critica" class="form-control" value="{{ form.lectura_critica.value }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="matematicas" class="form-label">Matemáticas:</label>
+                                    <input type="number" id="matematicas" name="matematicas" class="form-control" value="{{ form.matematicas.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sociales_ciudadanas" class="form-label">Sociales y Ciudadanas:</label>
+                                    <input type="number" id="sociales_ciudadanas" name="sociales_ciudadanas" class="form-control" value="{{ form.sociales_ciudadanas.value }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="ciencias_naturales" class="form-label">Ciencias Naturales:</label>
+                                    <input type="number" id="ciencias_naturales" name="ciencias_naturales" class="form-control" value="{{ form.ciencias_naturales.value }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ingles" class="form-label">Inglés:</label>
+                                    <input type="number" id="ingles" name="ingles" class="form-control" value="{{ form.ingles.value }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fecha_resultado" class="form-label">Fecha del Resultado:</label>
+                                    <input type="datetime-local" id="fecha_resultado" name="fecha_resultado" class="form-control" value="{{ form.fecha_resultado.value|date:'Y-m-d\TH:i' }}">
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-dark-blue">Guardar Cambios</button>
+                                <a href="{% url 'base:home' %}" class="btn btn-outline-dark-blue">Volver</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

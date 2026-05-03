@@ -1,0 +1,337 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Perfil - TestNii</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+      :root {
+        --primary-purple: #7c3aed;
+        --light-purple: #a78bfa;
+        --lighter-purple: #ede9fe;
+        --darker-purple: #5b21b6;
+        --secondary-teal: #14b8a6;
+        --light-teal: #5eead4;
+        --lighter-teal: #ccfbf1;
+        --accent-pink: #ec4899;
+        --light-pink: #fbcfe8;
+        --accent-amber: #f59e0b;
+        --light-amber: #fef3c7;
+        --page-bg: linear-gradient(135deg, #f3e8ff 0%, #e0f2fe 100%);
+        --card-bg: #ffffff;
+        --card-border-subtle: #e0e7ff;
+        --text-primary-color: #1f2937;
+        --text-secondary-color: #6b7280;
+        --text-on-primary: #ffffff;
+        --input-border-color: #d1d5db;
+        --input-focus-border-color: var(--primary-purple);
+        --input-bg-color: #f9fafb;
+        --shadow-color: rgba(91, 33, 182, 0.06);
+        --strong-shadow-color: rgba(91, 33, 182, 0.12);
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--page-bg);
+        color: var(--text-primary-color);
+        margin: 0;
+      }
+
+      .sidebar {
+        height: 100vh;
+        background-color: var(--card-bg);
+        box-shadow: 3px 0 10px rgba(0,0,0,0.05);
+        position: fixed;
+        width: 260px;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        padding-top: 1.5rem;
+        z-index: 1000;
+      }
+
+      .main-content {
+        margin-left: 260px;
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+      }
+
+      .profile-section {
+        padding: 1rem 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid var(--card-border-subtle);
+        margin-bottom: 1rem;
+      }
+
+      .profile-brand {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .profile-brand i { font-size: 2rem; }
+      .profile-name { font-size: 1.1rem; font-weight: 600; color: var(--darker-purple); margin-top: 0.5rem; }
+      .profile-role { font-size: 0.85rem; color: var(--text-secondary-color); margin-bottom: 1.5rem; }
+
+      .nav-link {
+        color: var(--text-secondary-color);
+        padding: 0.9rem 1.5rem;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        text-decoration: none;
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-link:hover { background-color: var(--lighter-purple); color: var(--primary-purple); border-left-color: var(--primary-purple); }
+      .nav-link.active { background-color: var(--lighter-purple); color: var(--darker-purple); font-weight: 600; border-left-color: var(--darker-purple); }
+      .nav-link.active .nav-icon { color: var(--darker-purple); }
+      .nav-icon { margin-right: 1rem; width: 22px; text-align: center; font-size: 1.2rem; color: var(--light-purple); }
+      
+      .sidebar-footer { margin-top: auto; padding: 1.5rem; }
+      .btn-modern { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: all 0.3s ease; }
+      .btn-logout { background-color: var(--light-pink); color: var(--accent-pink); border: 1px solid var(--accent-pink); width: 100%; }
+      .btn-logout:hover { background-color: var(--accent-pink); color: var(--text-on-primary); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2); }
+
+      .btn-logout-sidebar {
+        background-color: transparent;
+        color: var(--text-secondary-color);
+        border: 1px solid var(--card-border-subtle);
+        width: 100%;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+      .btn-logout-sidebar:hover {
+        background-color: var(--lighter-pink);
+        color: var(--accent-pink);
+        border-color: var(--accent-pink);
+      }
+      .btn-logout-sidebar i {
+        margin-right: 0.8rem;
+      }
+
+      .form-container {
+        background-color: var(--card-bg);
+        padding: 2.5rem 3rem; /* Más padding horizontal */
+        border-radius: 16px;
+        box-shadow: 0 8px 25px var(--strong-shadow-color);
+        width: 100%;
+        max-width: 800px; /* Un poco más ancho para el perfil */
+        margin-top: 1rem;
+      }
+
+      .form-title {
+        font-size: 2rem; /* Título más grande */
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 0.75rem;
+        text-align: left; /* Alineado a la izquierda */
+      }
+      .form-subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary-color);
+        margin-bottom: 2.5rem;
+        text-align: left; /* Alineado a la izquierda */
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Dos columnas en escritorio */
+        gap: 1.5rem 2rem; /* Espacio entre filas y columnas */
+      }
+
+      .form-group {
+        margin-bottom: 0; /* El gap del grid maneja el espaciado vertical */
+      }
+
+      .form-label {
+        display: block;
+        font-weight: 600; /* Label más destacado */
+        color: var(--text-primary-color);
+        margin-bottom: 0.6rem;
+        font-size: 0.9rem;
+      }
+
+      .form-control,
+      .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--input-border-color);
+        border-radius: 8px;
+        background-color: var(--input-bg-color);
+        color: var(--text-primary-color);
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: var(--input-focus-border-color);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        background-color: var(--card-bg);
+      }
+      .form-control[readonly] {
+        background-color: #e9ecef; /* Estilo para campos readonly */
+        opacity: 0.7;
+      }
+      
+      .form-actions {
+        margin-top: 2.5rem;
+        display: flex;
+        justify-content: flex-end; /* Botones a la derecha */
+        gap: 1rem;
+      }
+      .btn-submit {
+        background-color: var(--primary-purple);
+        color: var(--text-on-primary);
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+      }
+      .btn-submit:hover {
+        background-color: var(--darker-purple);
+        box-shadow: 0 6px 20px rgba(91, 33, 182, 0.3);
+      }
+      .btn-cancel {
+        background-color: var(--card-border-subtle);
+        color: var(--text-secondary-color);
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        border: 1px solid var(--input-border-color);
+      }
+      .btn-cancel:hover {
+        background-color: #e2e8f0;
+      }
+
+      @media (max-width: 992px) {
+        .sidebar { width: 220px; }
+        .main-content { margin-left: 220px; padding: 1.5rem; }
+        .form-container { padding: 2rem; }
+      }
+      @media (max-width: 768px) {
+        .sidebar { position: static; width: 100%; height: auto; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+        .main-content { margin-left: 0; }
+        .form-grid { grid-template-columns: 1fr; } /* Una columna en móvil */
+        .form-title, .form-subtitle { text-align: center; }
+        .form-actions { flex-direction: column; }
+        .form-actions .btn-modern { width: 100%; }
+      }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile-section">
+            <div class="profile-brand"><i class="bi bi-mortarboard-fill"></i> TestNii</div>
+            <h5 class="profile-name">{{ request.session.profesor_nombre|default:"Profesor" }}</h5>
+            <p class="profile-role">Panel de Profesor</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="{% url 'base:panel_profesor' %}" class="nav-link">
+                <span class="nav-icon"><i class="bi bi-collection-fill"></i></span> Módulos
+            </a>
+            <a href="{% url 'base:ver_resultados_estudiantes_profesor' %}" class="nav-link">
+                <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Estudiantes
+            </a>
+            <a href="{% url 'base:editar_perfil_profesor' %}" class="nav-link active">
+                <span class="nav-icon"><i class="bi bi-person-circle"></i></span> Perfil
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <form method="post" action="{% url 'base:logout_profesor' %}" style="width: 100%;">
+                {% csrf_token %}
+                <button type="submit" class="btn-modern btn-logout-sidebar">
+                    <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+                </button>
+            </form>
+            {# Considerar cambiar el action del logout a una URL válida si es necesario #}
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="form-container">
+            <h1 class="form-title">Editar Perfil</h1>
+            <p class="form-subtitle">Actualiza tu información personal y de contacto.</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-3" role="alert"
+                     style="background-color: {% if message.tags == 'success' %}var(--lighter-teal){% elif message.tags == 'error' %}var(--light-pink){% else %}var(--light-amber){% endif %};
+                            color: {% if message.tags == 'success' %}var(--secondary-teal){% elif message.tags == 'error' %}var(--accent-pink){% else %}var(--accent-amber){% endif %};
+                            border: 1px solid {% if message.tags == 'success' %}var(--secondary-teal){% elif message.tags == 'error' %}var(--accent-pink){% else %}var(--accent-amber){% endif %};
+                            padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ form.nombre.value|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" value="{{ form.apellido.value|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="identificacion" class="form-label">Identificación</label>
+                        <input type="text" class="form-control" id="identificacion" name="identificacion" value="{{ form.identificacion.value|default:'' }}" readonly>
+                        <small class="form-text text-muted">La identificación no se puede cambiar.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="correo" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="correo" name="correo" value="{{ form.correo.value|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ form.telefono.value|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" value="{{ form.direccion.value|default:'' }}">
+                    </div>
+                     <div class="form-group">
+                        <label for="area_especializacion" class="form-label">Área de Especialización</label>
+                        <input type="text" class="form-control" id="area_especializacion" name="area_especializacion" value="{{ form.area_especializacion.value|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="institucion" class="form-label">Institución</label>
+                        <input type="text" class="form-control" id="institucion" name="institucion" value="{{ form.institucion.value|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label for="grados" class="form-label">Grados Asignados (solo informativo)</label>
+                    <input type="text" class="form-control" id="grados" name="grados" value="{{ form.grados.value|default:'No asignados' }}" readonly>
+                     <small class="form-text text-muted">Para cambiar los grados, contacta al administrador.</small>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'base:panel_profesor' %}" class="btn-modern btn-cancel">Cancelar</a>
+                    <button type="submit" class="btn-modern btn-submit"><i class="bi bi-check-circle-fill"></i> Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+      // Script para la página si es necesario en el futuro
+    </script>
+</body>
+</html> 

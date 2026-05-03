@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: #d3cbf7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .container {
+        display: flex;
+        width: 900px;
+        max-width: 100%;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .left-panel {
+        background: #f5f3ff;
+        padding: 40px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .left-panel h2 {
+        color: #6a5acd;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: #6a5acd;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #d6d1f7;
+        border-radius: 8px;
+        outline: none;
+      }
+
+      .form-group input:focus {
+        border-color: #6a5acd;
+        box-shadow: 0 0 0 0.2rem rgba(106, 90, 205, 0.25);
+      }
+
+      .remember {
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .remember input {
+        margin-right: 8px;
+      }
+
+      .btn {
+        width: 100%;
+        background: #6a5acd;
+        color: white;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: #5b4fb5;
+      }
+
+      .link {
+        text-align: center;
+        font-size: 13px;
+        margin-top: 15px;
+        color: #6a5acd;
+      }
+
+      .right-panel {
+        flex: 1;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+      }
+
+      .right-panel img {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 20px;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left-panel">
+        <h2>Iniciar sesión - Profesor@</h2>
+        <form method="POST" action="{% url 'base:login_profesor' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="usuario">Usuario</label>
+            <input type="text" id="usuario" name="usuario" required />
+          </div>
+          <div class="form-group">
+            <label for="contrasena">Contraseña</label>
+            <input type="password" id="contrasena" name="contrasena" required />
+          </div>
+          <div class="remember">
+            <input type="checkbox" id="recordar" />
+            <label for="recordar">Recordar contraseña</label>
+          </div>
+          <button type="submit" class="btn">Iniciar</button>
+          <p class="link">
+            ¿No tienes cuenta?
+            <a
+              href="{% url 'base:signup_profesor' %}"
+              style="color: #6a5acd; text-decoration: underline"
+            >
+              Crear una
+            </a>
+          </p>
+        </form>
+      </div>
+      <div class="right-panel">
+        <img src="{% static 'img/image2.png' %}" alt="Aula" width="800" />
+      </div>
+    </div>
+  </body>
+</html>

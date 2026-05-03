@@ -1,0 +1,606 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        
+    
+        .navbar {
+            background: #10182F;
+            height: 50px;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+             font-family: 'Quicksand', 'Roboto Condensed', sans-serif;
+        }
+        
+        .container {
+            margin-top: 40px;
+        }
+        
+        h2 {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table-custom th,
+        .table-custom td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .table-custom th {
+            background: #10182F;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .table-custom tr {
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .table-custom tr:last-child {
+            border-bottom: none;
+        }
+        
+        .table-custom tbody tr:hover {
+            background: #f1f3f5;
+        }
+        
+        .edit-btn {
+            background-color: #4CAF50;
+            /* Verde */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .delete-btn {
+            background-color: #f44336;
+            /* Rojo */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .btn-dark-blue {
+            background-color: #ffffff;
+            color: #10182F;
+            font-weight: 700;
+            padding: 10px;
+        }
+        
+        .btn-dark-blue:hover {
+            background-color: #10182F;
+            color: #ffffff;
+            border: 1px solid #10182F;
+        }
+        
+        .btn-outline-dark-blue {
+            background-color: #10182F;
+            color: #10182F;
+            font-weight: 700;
+            border: 1px solid #10182F;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .btn-outline-dark-blue:hover {
+            background-color: #10182F;
+            color: #FFF;
+        }
+    </style>
+</head>
+
+<body>
+    <!--Navbar-->
+    <nav class="navbar">
+        <div class="container-fluid">
+
+        </div>
+    </nav>
+    <!--Navbar-->
+    <!--tablas-->
+    <br><br><br>
+    <div class="container mt-4">
+        <h1>Bienvenid@ de nuevo!</h1>
+        <h4>Mira una vista previa de tus datos</h4>
+        <br>
+        <div class="row">
+            <!-- Tarjeta Estudiantes -->
+            <div class="col-md-3">
+                
+                <div class="card shadow" style="background: #10182F; color: white; border: none;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people-fill display-4"></i>
+                        <h5 class="card-title mt-2">Estudiantes</h5>
+                        <p class="card-text fs-3">{{ total_estudiantes }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Profesores -->
+            <div class="col-md-3">
+                <div class="card shadow" style="background: #162447; color: white; border: none;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-badge-fill display-4"></i>
+                        <h5 class="card-title mt-2">Profesores</h5>
+                        <p class="card-text fs-3">{{ total_profesores }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Preguntas -->
+            <div class="col-md-3">
+                <div class="card shadow" style="background: #1B2A49; color: white; border: none;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-question-circle-fill display-4"></i>
+                        <h5 class="card-title mt-2">Preguntas</h5>
+                        <p class="card-text fs-3">{{ total_preguntas }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Materias -->
+            <div class="col-md-3">
+                <div class="card shadow" style="background: #253B60; color: white; border: none;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-book-fill display-4"></i>
+                        <h5 class="card-title mt-2">Materias</h5>
+                        <p class="card-text fs-3">{{ total_materias }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<br><br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h3 class="mb-4">Estudiantes</h3>
+                <a href="{% url 'base:agregar_estudiante' %}">
+                    <button class="btn-dark-blue">
+        <i class="bi bi-plus-circle-fill"></i> Agregar
+    </button>
+                </a>
+
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Fecha Nacimiento</th>
+                            <th>Género</th>
+                            <th>Identificación</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Institución</th>
+                            <th>Tipo</th>
+                            <th>Grado</th>
+                            <th>Fecha Inscripción</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for estudiante in estudiantes %}
+                        <tr>
+                            <td>{{ estudiante.id_estudiante }}</td>
+                            <td>{{ estudiante.nombre }}</td>
+                            <td>{{ estudiante.apellido }}</td>
+                            <td>{{ estudiante.fecha_nacimiento }}</td>
+                            <td>{{ estudiante.get_genero_display }}</td>
+                            <td>{{ estudiante.identificacion }}</td>
+                            <td>{{ estudiante.correo }}</td>
+                            <td>{{ estudiante.telefono }}</td>
+                            <td>{{ estudiante.direccion }}</td>
+                            <td>{{ estudiante.institucion }}</td>
+                            <td>{{ estudiante.get_tipo_institucion_display }}</td>
+                            <td>{{ estudiante.grado }}</td>
+                            <td>{{ estudiante.fecha_inscripcion }}</td>
+
+                            <td>
+                                {% if estudiante.id_estudiante %}
+                                <a href="{% url 'base:editar_estudiante' estudiante.id_estudiante %}">
+                                    <button class="edit-btn">Editar</button>
+                                </a>
+                                {% else %}
+                                <p>Error: ID no encontrado</p>
+                                {% endif %}
+                            </td>
+                            <td> <button class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="14">No hay estudiantes registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-1"></div>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-5">
+                <br>
+                <h3 class="mb-4">Examenes</h3>
+                 <a href="{% url 'base:agregar_examen' %}">
+                    <button class="btn-dark-blue">
+        <i class="bi bi-plus-circle-fill"></i> Agregar
+    </button>
+                                </a>
+
+                                <table class="table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Fecha Examen</th>
+                                            <th>Tipo</th>
+                                            <th>Duración (horas)</th>
+                                            <th>Ubicación</th>
+                                            <th>Estado</th>
+                                            <th>Editar</th>
+                                            <th>Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for examen in examenes %}
+                                        <tr>
+                                            <td>{{ examen.id_examen }}</td>
+                                            <td>{{ examen.fecha_examen }}</td>
+                                            <td>{{ examen.tipo }}</td>
+                                            <td>{{ examen.duracion }}</td>
+                                            <td>{{ examen.ubicacion }}</td>
+                                            <td>{{ examen.estado }}</td>
+                                            <td>
+                                                {% if examen.id_examen %}
+                                                <a href="{% url 'base:editar_examen' examen.id_examen %}">
+                                                    <button class="edit-btn">Editar</button>
+                                                </a>
+                                                {% else %}
+                                                <p>Error: ID no encontrado</p>
+                                                {% endif %}
+                                            </td>
+                                            <td> <button class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No hay exámenes registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col-4">
+                <br>
+                <h3 class="mb-4">Materias</h3>
+ <a href="{% url 'base:agregar_materia' %}">
+                    <button class="btn-dark-blue">
+        <i class="bi bi-plus-circle-fill"></i> Agregar
+    </button>
+                                                </a>
+                                                <table class="table-custom">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Nombre</th>
+                                                            <th>Área</th>
+                                                            <th>Editar</th>
+                                                            <th>Eliminar</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for materia in materias %}
+                                                        <tr>
+                                                            <td>{{ materia.id_materia }}</td>
+                                                            <td>{{ materia.nombre }}</td>
+                                                            <td>{{ materia.area }}</td>
+
+                                                            <td>
+                                                                {% if materia.id_materia %}
+                                                                <a href="{% url 'base:editar_materia' materia.id_materia %}">
+                                                                    <button class="edit-btn">Editar</button>
+                                                                </a>
+                                                                {% else %}
+                                                                <p>Error: ID no encontrado</p>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td> <button class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">No hay materias registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-5">
+                <br>
+                <h3 class="mb-4">Preguntas</h3>
+                 <a href="{% url 'base:agregar_pregunta' %}">
+                    <button class="btn-dark-blue">
+        <i class="bi bi-plus-circle-fill"></i> Agregar
+    </button>
+                                                                </a>
+                                                                <table class="table-custom">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>ID</th>
+                                                                            <th>Examen</th>
+                                                                            <th>Enunciado</th>
+                                                                            <th>Tipo</th>
+                                                                            <th>Opciones</th>
+                                                                            <th>Respuesta Correcta</th>
+                                                                            <th>Editar</th>
+                                                                            <th>Eliminar</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for pregunta in preguntas %}
+                                                                        <tr>
+                                                                            <td>{{ pregunta.id_pregunta }}</td>
+                                                                            <td>{{ pregunta.examen.nombre }}</td>
+                                                                            <td>{{ pregunta.enunciado }}</td>
+                                                                            <td>{{ pregunta.tipo }}</td>
+                                                                            <td>
+                                                                                {% if pregunta.opciones %} {{ pregunta.opciones|safe }} {% else %} N/A {% endif %}
+                                                                            </td>
+                                                                            <td>{{ pregunta.respuesta_correcta }}</td>
+                                                                            <td>
+                                                                                {% if pregunta.id_pregunta %}
+                                                                                <a href="{% url 'base:editar_pregunta' pregunta.id_pregunta %}">
+                                                                                    <button class="edit-btn">Editar</button>
+                                                                                </a>
+                                                                                {% else %}
+                                                                                <p>Error: ID no encontrado</p>
+                                                                                {% endif %}
+                                                                            </td>
+                                                                            <td> <button class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No hay preguntas registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col-4">
+                <br>
+                <h3 class="mb-4">Respuestas de estudiantes</h3>
+                <a href="{% url 'base:agregar_respuesta' %}">
+                    <button class="btn-dark-blue">
+                        <i class="bi bi-plus-circle-fill"></i> Agregar
+                     </button>
+                                                                                </a>
+                                                                                <table class="table-custom">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>ID</th>
+                                                                                            <th>Estudiante</th>
+                                                                                            <th>Pregunta</th>
+                                                                                            <th>Respuesta Seleccionada</th>
+                                                                                            <th>Fecha Respuesta</th>
+                                                                                            <th>Editar</th>
+                                                                                            <th>Eliminar</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        {% for respuesta in respuestas %}
+                                                                                        <tr>
+                                                                                            <td>{{ respuesta.id_respuesta }}</td>
+                                                                                            <td>{{ respuesta.estudiante.nombre }}</td>
+                                                                                            <td>{{ respuesta.pregunta.enunciado }}</td>
+                                                                                            <td>{{ respuesta.respuesta_seleccionada }}</td>
+                                                                                            <td>{{ respuesta.fecha_respuesta|date:"Y-m-d" }}</td>
+                                                                                            <td>
+                                                                                                {% if respuesta.id_respuesta %}
+                                                                                                <a href="{% url 'base:editar_respuesta' respuesta.id_respuesta %}">
+                                                                                                    <button class="edit-btn">Editar</button>
+                                                                                                </a>
+                                                                                                {% else %}
+                                                                                                <p>Error: ID no encontrado</p>
+                                                                                                {% endif %}
+                                                                                            </td>
+                                                                                            <td> <button class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">No hay respuestas registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+    </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+<h3 class="mb-4">Resultados</h3>
+                <a href="{% url 'base:agregar_resultado' %}">
+                    <button class="btn-dark-blue">
+        <i class="bi bi-plus-circle-fill"></i> Agregar
+    </button>
+                </a>
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Estudiante</th>
+                            <th>Examen</th>
+                            <th>Puntaje Global</th>
+                            <th>Lectura Crítica</th>
+                            <th>Matemáticas</th>
+                            <th>Sociales</th>
+                            <th>Ciencias</th>
+                            <th>Inglés</th>
+                            <th>Fecha Resultado</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resultado in resultados %}
+                        <tr>
+                            <td>{{ resultado.id_resultado }}</td>
+                            <td>{{ resultado.estudiante.nombre }} {{ resultado.estudiante.apellido }}</td>
+                            <td>{{ resultado.examen.nombre }}</td>
+                            <td>{{ resultado.puntaje_global }}</td>
+                            <td>{{ resultado.lectura_critica }}</td>
+                            <td>{{ resultado.matematicas }}</td>
+                            <td>{{ resultado.sociales }}</td>
+                            <td>{{ resultado.ciencias }}</td>
+                            <td>{{ resultado.ingles }}</td>
+                            <td>{{ resultado.fecha_resultado }}</td>
+                            <td>
+                                {% if resultado.id_resultado %}
+                                <a href="{% url 'base:editar_resultado' resultado.id_resultado %}">
+                                    <button class="edit-btn">Editar</button>
+                                </a>
+                                {% else %}
+                                <p>Error: ID no encontrado</p>
+                                {% endif %}
+                            </td>
+                            <td> <button class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="11">No hay resultados registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+        </div>
+        <div class="col-1"></div>
+    </div>
+                
+</div>
+    <div class="container">
+    <h2 class="text-center mb-4">Profesores</h2>
+    <a href="{% url 'base:agregar_profesor' %}">
+        <button class="btn-dark-blue">
+            <i class="bi bi-plus-circle-fill"></i> Agregar
+        </button>
+    </a>
+    <div class="row">
+        {% for profesor in profesores %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ profesor.nombre }} {{ profesor.apellido }}</h5>
+                    <p class="card-text"><strong>ID:</strong> {{ profesor.id_profesor }}</p>
+                    <p class="card-text"><strong>Identificación:</strong> {{ profesor.identificacion }}</p>
+                    <p class="card-text"><strong>Correo:</strong> {{ profesor.correo }}</p>
+                    <p class="card-text"><strong>Teléfono:</strong> {{ profesor.telefono }}</p>
+                    <p class="card-text"><strong>Dirección:</strong> {{ profesor.direccion }}</p>
+                    <p class="card-text"><strong>Área Especialización:</strong> {{ profesor.area_especializacion }}</p>
+                    <p class="card-text"><strong>Institución:</strong> {{ profesor.institucion }}</p>
+                    <p class="card-text"><strong>Estado:</strong> {{ profesor.estado }}</p>
+                    <a href="{% url 'base:editar_profesor' profesor.id_profesor %}" class="btn btn-outline-dark-blue">Editar</a>
+                    <button class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No hay profesores registrados.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="text-center mb-4">Administradores</h2>
+    <a href="{% url 'base:agregar_administrador' %}">
+        <button class="btn-dark-blue">
+            <i class="bi bi-plus-circle-fill"></i> Agregar
+        </button>
+    </a>
+    <div class="row">
+        {% for administrador in administradores %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ administrador.nombre }} {{ administrador.apellido }}</h5>
+                    <p class="card-text"><strong>ID:</strong> {{ administrador.id_administrador }}</p>
+                    <p class="card-text"><strong>Identificación:</strong> {{ administrador.identificacion }}</p>
+                    <p class="card-text"><strong>Correo:</strong> {{ administrador.correo }}</p>
+                    <p class="card-text"><strong>Teléfono:</strong> {{ administrador.telefono }}</p>
+                    <p class="card-text"><strong>Rol:</strong> {{ administrador.rol }}</p>
+                    <p class="card-text"><strong>Fecha Registro:</strong> {{ administrador.fecha_registro }}</p>
+                    <a href="{% url 'base:editar_administrador' administrador.id_administrador %}" class="btn btn-outline-dark-blue">Editar</a>
+                    <button class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este elemento?')">Eliminar</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No hay administradores registrados.</p>
+        {% endfor %}
+    </div>
+</div>
+            
+            <!--tablas-->
+            <!-- As a heading -->
+<br><br>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+{% endblock content %}

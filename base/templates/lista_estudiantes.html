@@ -1,0 +1,311 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Gestión de Estudiantes {# Título para la pestaña del navegador #}
+{% endblock %}
+
+{% block page_content %}
+
+  <h3 class="mb-3">Gestión de Estudiantes</h3> {# Título visible en la página #}
+
+  <!-- Statistics Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Total Estudiantes</h6>
+              {# Asumiendo que total_estudiantes_count se pasa desde la vista #}
+              <h4 class="mb-0">{{ total_estudiantes_count|default:0 }}</h4> 
+            </div>
+            <i class="bi bi-people-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Activos</h6>
+              {# Asumiendo que total_estudiantes_activos_count se pasa desde la vista o es igual al total #}
+              <h4 class="mb-0">{{ total_estudiantes_activos_count|default:total_estudiantes_count|default:0 }}</h4>
+            </div>
+            <i class="bi bi-check-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Nuevos (Este mes)</h6>
+              <h4 class="mb-0">+12</h4>
+            </div>
+            <i class="bi bi-person-plus-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Promedio Edad</h6>
+              <h4 class="mb-0">18 años</h4>
+            </div>
+            <i class="bi bi-calendar-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="GET" action="{% url 'base:listar_estudiantes' %}">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-5">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" name="q" placeholder="Buscar por nombre o apellido..." value="{{ query_busqueda_actual|default:'' }}"/>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" name="grado">
+              <option value="">Todos los grados</option>
+              {% for grado_opcion in grados_existentes %}
+                <option value="{{ grado_opcion }}" {% if grado_opcion == grado_filtrado_actual %}selected{% endif %}>Grado {{ grado_opcion }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+          </div>
+          <div class="col-md-2">
+            <a href="{% url 'base:listar_estudiantes' %}" class="btn btn-outline-secondary w-100">
+              <i class="bi bi-arrow-clockwise"></i>
+              Limpiar
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Students Table -->
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-people-fill me-2"></i>
+          Lista de Estudiantes ({{ page_obj.paginator.count }}) {# MODIFICADO: Usar page_obj.paginator.count para el total filtrado #}
+        </h5>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-grid-3x3-gap"></i></button>
+          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    {% if page_obj.object_list %}
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" class="form-check-input" />
+                </th>
+                <th>Estudiante</th>
+                <th>Identificación</th>
+                <th>Contacto</th>
+                <th>Institución</th>
+                <th>Grado</th>
+                <th>Fecha Inscripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for estudiante in page_obj.object_list %}
+                <tr>
+                  <td>
+                    <input type="checkbox" class="form-check-input" />
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle bg-primary text-white me-3">{{ estudiante.nombre|first }}{{ estudiante.apellido|first }}</div>
+                      <div>
+                        <div class="fw-semibold">{{ estudiante.nombre }} {{ estudiante.apellido }}</div>
+                        <small class="text-muted">{{ estudiante.get_genero_display }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark">{{ estudiante.identificacion }}</span>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="text-sm">{{ estudiante.correo }}</div>
+                      <small class="text-muted">{{ estudiante.telefono|default:'Sin teléfono' }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="fw-medium">{{ estudiante.institucion|default:'N/A' }}</div>
+                      <span class="badge {% if estudiante.tipo_institucion == 'Pública' %}
+                          bg-success
+                        {% else %}
+                          bg-info
+                        {% endif %} bg-opacity-25 text-dark">
+                        {{ estudiante.get_tipo_institucion_display }}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-primary bg-opacity-25 text-primary">{{ estudiante.grado|default:'N/A' }}</span>
+                  </td>
+                  <td>
+                    <div>
+                      <div>{{ estudiante.fecha_inscripcion|date:'d/m/Y' }}</div>
+                      <small class="text-muted">{{ estudiante.fecha_inscripcion|timesince }} atrás</small>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-success">Activo</span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" title="Ver detalles"><i class="bi bi-eye"></i></button>
+                      <a href="{% url 'base:editar_estudiante' estudiante.id_estudiante %}" class="btn btn-sm btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                      <a href="{% url 'base:eliminar_estudiante' estudiante.id_estudiante %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar a {{ estudiante.nombre }} {{ estudiante.apellido }}?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="text-muted">
+            Mostrando {{ page_obj.start_index }}-{{ page_obj.end_index }} de {{ page_obj.paginator.count }} estudiantes
+          </div>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query_busqueda_actual %}&q={{ query_busqueda_actual }}{% endif %}{% if grado_filtrado_actual %}&grado={{ grado_filtrado_actual }}{% endif %}">Anterior</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <span class="page-link">Anterior</span>
+                </li>
+              {% endif %}
+
+              {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                  <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query_busqueda_actual %}&q={{ query_busqueda_actual }}{% endif %}{% if grado_filtrado_actual %}&grado={{ grado_filtrado_actual }}{% endif %}">{{ num }}</a></li>
+                {% elif num == page_obj.paginator.page_range.0 or num == page_obj.paginator.page_range.end %}
+                   {% if num == page_obj.paginator.page_range.0 and page_obj.number|add:'-3' > 1 %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                   {% endif %}
+                  <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query_busqueda_actual %}&q={{ query_busqueda_actual }}{% endif %}{% if grado_filtrado_actual %}&grado={{ grado_filtrado_actual }}{% endif %}">{{ num }}</a></li>
+                   {% if num == page_obj.paginator.page_range.end and page_obj.number|add:'3' < page_obj.paginator.num_pages %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                   {% endif %}
+                {% endif %}
+              {% endfor %}
+
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query_busqueda_actual %}&q={{ query_busqueda_actual }}{% endif %}{% if grado_filtrado_actual %}&grado={{ grado_filtrado_actual }}{% endif %}">Siguiente</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <span class="page-link">Siguiente</span>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    {% else %}
+      <!-- Empty State -->
+      <div class="card-body">
+        <div class="empty-state">
+          <i class="bi bi-people"></i>
+          <h4>{% if query_busqueda_actual or grado_filtrado_actual %}No hay estudiantes que coincidan con tu búsqueda{% else %}No hay estudiantes registrados{% endif %}</h4>
+          <p>{% if query_busqueda_actual or grado_filtrado_actual %}Intenta ajustar tus filtros o <a href="{% url 'base:listar_estudiantes' %}">limpiar la búsqueda</a>.{% else %}Comienza agregando el primer estudiante al sistema.{% endif %}</p>
+          {% if not query_busqueda_actual and not grado_filtrado_actual %}
+          <a href="{% url 'base:agregar_estudiante' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>
+            Agregar Primer Estudiante
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .text-sm {
+      font-size: 0.875rem;
+    }
+    
+    .fw-medium {
+      font-weight: 500;
+    }
+    
+    .table th {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      color: #374151;
+    }
+    
+    .btn-group .btn {
+      border: 1px solid #dee2e6;
+    }
+    
+    .btn-group .btn:hover {
+      z-index: 2;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6c757d;
+    }
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #adb5bd;
+    }
+  </style>
+{% endblock %}

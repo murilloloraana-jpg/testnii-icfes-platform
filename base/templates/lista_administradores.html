@@ -1,0 +1,326 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Gestión de Administradores
+{% endblock %}
+
+{% block page_content %}
+  <!-- Page Header -->
+   <br><br><br><br><br><br><br><br>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-1">Gestión de Administradores</h2>
+      <p class="text-muted mb-0">Administra los usuarios con privilegios administrativos</p>
+    </div>
+    <div class="d-flex gap-2">
+      
+      <a href="{% url 'base:agregar_administrador' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i>
+        Agregar Administrador
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Total Administradores</h6>
+              <h4 class="mb-0">{{ total_administradores_filtrados }}</h4>
+            </div>
+            <i class="bi bi-shield-check opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Activos</h6>
+              <h4 class="mb-0">{{ count_activos }}</h4>
+            </div>
+            <i class="bi bi-check-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">"Super Admins"</h6>
+              <h4 class="mb-0">{{ count_super_admins }}</h4>
+            </div>
+            <i class="bi bi-star-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Registrados últimos 30 días</h6>
+              <h4 class="mb-0">{{ count_ultimos_30_dias }}</h4>
+            </div>
+            <i class="bi bi-person-plus-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" action="{% url 'base:listar_administradores' %}">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" name="q" placeholder="Buscar por nombre, ID, correo..." value="{{ query_actual }}">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" name="rol">
+              <option value="Todos los roles" {% if rol_filter_actual == 'Todos los roles' %}selected{% endif %}>Todos los roles</option>
+              {% for rol_opcion in roles_existentes %}
+              <option value="{{ rol_opcion }}" {% if rol_filter_actual == rol_opcion %}selected{% endif %}>{{ rol_opcion }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" disabled>
+              <option>Departamento (N/A)</option>
+            </select>
+          </div>
+          <div class="col-md-1">
+            <select class="form-select" disabled>
+              <option>Estado (N/A)</option>
+            </select>
+          </div>
+          <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+            <a href="{% url 'base:listar_administradores' %}" class="btn btn-outline-secondary w-100" title="Limpiar filtros">
+              <i class="bi bi-arrow-clockwise"></i>
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Administrators Table -->
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-shield-check me-2"></i>
+          Lista de Administradores ({{ administradores.paginator.count }})
+        </h5>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary" title="Vista Cuadrícula (Próximamente)"><i class="bi bi-grid-3x3-gap"></i></button>
+          <button class="btn btn-sm btn-outline-secondary active" title="Vista Lista"><i class="bi bi-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    {% if administradores.object_list %}
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" class="form-check-input" id="selectAllAdmins" />
+                </th>
+                <th>Administrador</th>
+                <th>Identificación</th>
+                <th>Contacto</th>
+                <th>Rol</th>
+                <th>Fecha Registro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for admin in administradores %}
+                <tr>
+                  <td>
+                    <input type="checkbox" class="form-check-input" name="admin_id" value="{{ admin.id_administrador }}"/>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle bg-warning text-white me-3">{{ admin.nombre|first|upper }}{{ admin.apellido|first|upper }}</div>
+                      <div>
+                        <div class="fw-semibold">{{ admin.nombre }} {{ admin.apellido }}</div>
+                        <small class="text-muted">ID: {{ admin.id_administrador }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark">{{ admin.identificacion }}</span>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="text-sm">{{ admin.correo|default:'N/A' }}</div>
+                      <small class="text-muted">{{ admin.telefono|default:'Sin teléfono' }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    {% if admin.rol == "Super Admin" %}
+                        <span class="badge bg-danger text-white">{{ admin.rol }}</span>
+                    {% else %}
+                        <span class="badge bg-info bg-opacity-50 text-dark-emphasis">{{ admin.rol|default:'Admin' }}</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div>
+                      <div>{{ admin.fecha_registro|date:'d/m/Y' }}</div>
+                      <small class="text-muted">{{ admin.fecha_registro|time:'H:i' }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" title="Ver detalles (Próximamente)"><i class="bi bi-eye"></i></button>
+                      <a href="{% url 'base:editar_administrador' admin.id_administrador %}" class="btn btn-sm btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                      <a href="{% url 'base:eliminar_administrador' admin.id_administrador %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar al administrador {{ admin.nombre }} {{ admin.apellido }}?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="text-muted">Mostrando {{ administradores.start_index }}-{{ administradores.end_index }} de {{ administradores.paginator.count }} administradores</div>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              {% if administradores.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page=1&q={{ query_actual }}&rol={{ rol_filter_actual }}">Primera</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ administradores.previous_page_number }}&q={{ query_actual }}&rol={{ rol_filter_actual }}">Anterior</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Primera</span></li>
+                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+              {% endif %}
+
+              {% for num in administradores.paginator.page_range %}
+                {% if administradores.number == num %}
+                  <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > administradores.number|add:'-3' and num < administradores.number|add:'3' %}
+                  <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ query_actual }}&rol={{ rol_filter_actual }}">{{ num }}</a></li>
+                {% endif %}
+              {% endfor %}
+
+              {% if administradores.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ administradores.next_page_number }}&q={{ query_actual }}&rol={{ rol_filter_actual }}">Siguiente</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ administradores.paginator.num_pages }}&q={{ query_actual }}&rol={{ rol_filter_actual }}">Última</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                <li class="page-item disabled"><span class="page-link">Última</span></li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    {% else %}
+      <!-- Empty State -->
+      <div class="card-body">
+        <div class="empty-state text-center py-5">
+          <i class="bi bi-shield-slash fs-1 text-muted mb-3"></i>
+          <h4>No se encontraron administradores</h4>
+          <p class="text-muted">
+            {% if query_actual or rol_filter_actual != 'Todos los roles' %}
+                Intenta ajustar los filtros o revisa el término de búsqueda.
+                <br>
+                <a href="{% url 'base:listar_administradores' %}" class="btn btn-sm btn-outline-primary mt-2">
+                    <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
+                </a>
+            {% else %}
+                Comienza agregando el primer administrador al sistema.
+                <br>
+                <a href="{% url 'base:agregar_administrador' %}" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Agregar Primer Administrador
+                </a>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase; /* Para que las iniciales se vean mejor */
+    }
+    
+    .text-sm {
+      font-size: 0.875rem;
+    }
+    
+    .fw-medium {
+      font-weight: 500;
+    }
+    
+    .table th {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      color: #374151; /* Un gris oscuro para las cabeceras */
+    }
+    
+    .btn-group .btn {
+      border: 1px solid #dee2e6; /* Borde estándar de Bootstrap */
+    }
+    .btn-group .btn:not(:last-child) {
+        border-right: 0; /* Evitar doble borde en el grupo */
+    }
+    
+    .btn-group .btn:hover {
+      z-index: 2; /* Para que el hover se muestre sobre otros botones */
+    }
+
+    .empty-state i {
+        font-size: 3rem; /* Ícono más grande para el estado vacío */
+    }
+    .empty-state h4 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .badge {
+      font-size: 0.75rem; /* Tamaño de fuente más pequeño para badges */
+      font-weight: 500;
+      padding: 0.35em 0.65em; /* Relleno estándar para badges */
+    }
+  </style>
+{% endblock %}

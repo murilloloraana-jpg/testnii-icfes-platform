@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Administrador - TestNii</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-purple: #7c3aed; /* Morado principal */
+            --light-purple: #a78bfa;   /* Morado claro */
+            --lighter-purple: #ede9fe; /* Morado más claro (casi lavanda) */
+            --darker-purple: #5b21b6;  /* Morado oscuro */
+            --text-on-primary: #ffffff;
+            --page-bg: linear-gradient(135deg, var(--lighter-purple) 0%, #e0f2fe 100%); /* Gradiente suave de lavanda a azul claro */
+            --card-bg: #ffffff;
+            --input-border-color: #d1d5db;
+            --input-focus-border-color: var(--primary-purple);
+            --text-primary-color: #1f2937;
+            --text-secondary-color: #6b7280;
+            --shadow-color: rgba(91, 33, 182, 0.1);
+            --error-color: #ef4444; /* Rojo para errores */
+            --error-light-bg: #fee2e2; /* Fondo claro para mensajes de error */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--page-bg);
+            color: var(--text-primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .login-container {
+            background-color: var(--card-bg);
+            padding: 2.5rem 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .login-brand {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        .login-brand i {
+            font-size: 2.8rem;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary-color);
+            margin-bottom: 0.25rem;
+        }
+        .login-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary-color);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
+            border: 1px solid var(--input-border-color);
+            border-radius: 8px;
+            background-color: var(--lighter-purple); /* Fondo de input más claro */
+            color: var(--text-primary-color);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-control::placeholder {
+            color: var(--light-purple);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--input-focus-border-color);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+            background-color: var(--card-bg);
+        }
+
+        .btn-submit {
+            background-color: var(--primary-purple);
+            color: var(--text-on-primary);
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        .btn-submit:hover {
+            background-color: var(--darker-purple);
+            box-shadow: 0 5px 15px rgba(91, 33, 182, 0.25);
+        }
+        
+        .signup-link-container {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary-color);
+        }
+        .signup-link {
+            color: var(--primary-purple);
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .signup-link:hover {
+            text-decoration: underline;
+            color: var(--darker-purple);
+        }
+
+        .alert-error {
+            background-color: var(--error-light-bg);
+            color: var(--error-color);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--error-color);
+            text-align: left;
+        }
+        .alert-error ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-brand">
+            <i class="bi bi-shield-lock-fill"></i> TestNii
+        </div>
+        <h1 class="login-title">Acceso Administrador</h1>
+        <p class="login-subtitle">Ingresa tus credenciales para continuar.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-error" role="alert">
+                   {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            <div class="alert-error">
+                <ul>
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        
+        <form method="post" action="{% url 'base:login_administrador' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.identificacion.id_for_label }}" class="form-label">{{ form.identificacion.label }}</label>
+                {{ form.identificacion }}
+                {% if form.identificacion.errors %}
+                    <div class="alert-error mt-2">
+                        {% for error in form.identificacion.errors %}<li>{{ error }}</li>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.contraseña.id_for_label }}" class="form-label">{{ form.contraseña.label }}</label>
+                {{ form.contraseña }}
+                 {% if form.contraseña.errors %}
+                    <div class="alert-error mt-2">
+                        {% for error in form.contraseña.errors %}<li>{{ error }}</li>{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn-modern btn-submit">Ingresar</button>
+        </form>
+        <div class="signup-link-container">
+            ¿No tienes una cuenta de administrador? <a href="{% url 'base:signup_administrador' %}" class="signup-link">Regístrate aquí</a>.
+        </div>
+    </div>
+</body>
+</html> 

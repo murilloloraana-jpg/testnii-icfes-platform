@@ -1,0 +1,642 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ver Preguntas del Módulo - {{ examen.tipo }} - TestNii</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-purple: #7c3aed;
+            --light-purple: #a78bfa;
+            --lighter-purple: #ede9fe;
+            --darker-purple: #5b21b6;
+            --secondary-teal: #14b8a6;
+            --light-teal: #5eead4;
+            --lighter-teal: #ccfbf1;
+            --accent-pink: #ec4899;
+            --light-pink: #fbcfe8;
+            --accent-amber: #f59e0b;
+            --light-amber: #fef3c7;
+            --page-bg: linear-gradient(135deg, #f3e8ff 0%, #e0f2fe 100%);
+            --card-bg: #ffffff;
+            --card-border-subtle: #e0e7ff;
+            --text-primary-color: #1f2937;
+            --text-secondary-color: #6b7280;
+            --text-on-primary: #ffffff;
+            --input-border-color: #d1d5db;
+            --input-focus-border-color: var(--primary-purple);
+            --input-bg-color: #f9fafb;
+            --shadow-color: rgba(91, 33, 182, 0.06);
+            --strong-shadow-color: rgba(91, 33, 182, 0.12);
+            --danger-color: #dc3545;
+            --light-danger-color: #f8d7da;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-primary-color);
+            margin: 0;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background-color: var(--card-bg);
+            box-shadow: 3px 0 10px rgba(0,0,0,0.05);
+            position: fixed;
+            width: 260px;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding-top: 1.5rem;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 2.5rem;
+        }
+
+        .profile-section, .sidebar-footer, .sidebar-menu, .nav-link {
+            /* Estilos de sidebar copiados de agregar_modulo.html para consistencia */
+        }
+        .profile-section {
+            padding: 1rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border-subtle);
+            margin-bottom: 1rem;
+        }
+        .profile-brand { font-size: 1.8rem; font-weight: 700; color: var(--primary-purple); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .profile-brand i { font-size: 2rem; }
+        .profile-name { font-size: 1.1rem; font-weight: 600; color: var(--darker-purple); margin-top: 0.5rem; }
+        .profile-role { font-size: 0.85rem; color: var(--text-secondary-color); margin-bottom: 1.5rem; }
+        .nav-link { color: var(--text-secondary-color); padding: 0.9rem 1.5rem; display: flex; align-items: center; font-weight: 500; text-decoration: none; border-left: 4px solid transparent; transition: all 0.2s ease-in-out; }
+        .nav-link:hover { background-color: var(--lighter-purple); color: var(--primary-purple); border-left-color: var(--primary-purple); }
+        .nav-link.active { background-color: var(--lighter-purple); color: var(--darker-purple); font-weight: 600; border-left-color: var(--darker-purple); }
+        .nav-link.active .nav-icon { color: var(--darker-purple); }
+        .nav-icon { margin-right: 1rem; width: 22px; text-align: center; font-size: 1.2rem; color: var(--light-purple); }
+        .sidebar-footer { margin-top: auto; padding: 1.5rem; }
+
+        .btn-modern {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem;
+            border-radius: 50px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: all 0.3s ease;
+        }
+        .btn-logout { background-color: var(--light-pink); color: var(--accent-pink); border: 1px solid var(--accent-pink); width: 100%; }
+        .btn-logout:hover { background-color: var(--accent-pink); color: var(--text-on-primary); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2); }
+
+        .btn-logout-sidebar {
+            background-color: transparent;
+            color: var(--text-secondary-color);
+            border: 1px solid var(--card-border-subtle);
+            width: 100%;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .btn-logout-sidebar:hover {
+            background-color: var(--lighter-pink);
+            color: var(--accent-pink);
+            border-color: var(--accent-pink);
+        }
+        .btn-logout-sidebar i {
+            margin-right: 0.8rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary-color);
+        }
+
+        .btn-add-new {
+            background-color: var(--primary-purple);
+            color: var(--text-on-primary);
+        }
+        .btn-add-new:hover {
+            background-color: var(--darker-purple);
+        }
+
+        .pregunta-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--card-border-subtle);
+        }
+
+        .pregunta-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .pregunta-enunciado {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            flex-grow: 1;
+        }
+        .pregunta-tipo {
+            font-size: 0.8rem;
+            color: var(--text-secondary-color);
+            background-color: var(--lighter-purple);
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .pregunta-opciones ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 1rem;
+        }
+        .pregunta-opciones li {
+            padding: 0.4rem 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary-color);
+            border-bottom: 1px dotted var(--card-border-subtle);
+        }
+        .pregunta-opciones li:last-child {
+            border-bottom: none;
+        }
+        .pregunta-opciones li.correcta {
+            color: var(--secondary-teal);
+            font-weight: 600;
+        }
+        .pregunta-opciones li.correcta::before {
+            content: "\F26A  "; /* Bootstrap icon check circle */
+            font-family: "bootstrap-icons";
+            margin-right: 0.5rem;
+            color: var(--secondary-teal);
+        }
+
+        .pregunta-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        .btn-action-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+        .btn-edit {
+            background-color: var(--light-teal);
+            color: var(--secondary-teal);
+            border: 1px solid var(--secondary-teal);
+        }
+        .btn-edit:hover {
+            background-color: var(--secondary-teal);
+            color: var(--text-on-primary);
+        }
+        .btn-delete {
+            background-color: var(--light-pink);
+            color: var(--accent-pink);
+            border: 1px solid var(--accent-pink);
+        }
+        .btn-delete:hover {
+            background-color: var(--accent-pink);
+            color: var(--text-on-primary);
+        }
+
+        .no-preguntas-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            border: 2px dashed var(--card-border-subtle);
+        }
+        .no-preguntas-card i { font-size: 3rem; color: var(--light-purple); margin-bottom: 1rem; }
+        .no-preguntas-title { font-size: 1.5rem; font-weight: 600; color: var(--primary-purple); margin-bottom: 0.5rem; }
+        .no-preguntas-text { color: var(--text-secondary-color); margin-bottom: 1.5rem; }
+
+        /* Estilos para el Modal (simplificado, considera usar Bootstrap Modal si ya está en el proyecto) */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
+        .modal-title { font-size: 1.5rem; font-weight: 600; color: var(--primary-purple); }
+        .close-button {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        .close-button:hover, .close-button:focus { color: black; text-decoration: none; }
+
+        /* Placeholder para el form dentro del modal */
+        .modal-body .form-group { margin-bottom: 1rem; }
+        .modal-body .form-label { display: block; font-weight: 500; margin-bottom: .3rem; font-size: .9rem; }
+        .modal-body .form-control, .modal-body .form-select {
+            width: 100%; padding: .7rem 1rem; font-size: 1rem; border: 1px solid var(--input-border-color);
+            border-radius: 8px; background-color: var(--input-bg-color); box-sizing: border-box;
+        }
+        .modal-footer {
+            padding-top: 1rem; border-top: 1px solid #eee; margin-top: 1rem; text-align: right;
+        }
+        .btn-save-changes {
+            background-color: var(--primary-purple);
+            color: var(--text-on-primary);
+        }
+         .btn-cancel {
+            background-color: var(--text-secondary-color);
+            color: var(--text-on-primary);
+            margin-left: 0.5rem;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile-section">
+            <div class="profile-brand"><i class="bi bi-mortarboard-fill"></i> TestNii</div>
+            <h5 class="profile-name">{{ request.session.profesor_nombre|default:"Profesor" }}</h5>
+            <p class="profile-role">Panel de Profesor</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="{% url 'base:panel_profesor' %}" class="nav-link">
+                <span class="nav-icon"><i class="bi bi-collection-fill"></i></span> Módulos
+            </a>
+            <a href="{% url 'base:ver_resultados_estudiantes_profesor' %}" class="nav-link">
+                <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Estudiantes
+            </a>
+            <a href="{% url 'base:editar_perfil_profesor' %}" class="nav-link">
+                <span class="nav-icon"><i class="bi bi-person-circle"></i></span> Perfil
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <form method="post" action="{% url 'base:logout_profesor' %}" style="width: 100%;">
+                {% csrf_token %}
+                <button type="submit" class="btn-modern btn-logout-sidebar">
+                    <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Preguntas de: {{ examen.tipo }}</h1>
+            <a href="{% url 'base:agregar_pregunta' examen.id_examen %}" class="btn-modern btn-add-new">
+                <i class="bi bi-plus-circle-fill"></i> Agregar Nueva Pregunta
+            </a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} mb-3" role="alert"
+                 style="background-color: {% if message.tags == 'success' %}var(--lighter-teal){% elif message.tags == 'error' %}var(--light-pink){% else %}var(--light-amber){% endif %};
+                        color: {% if message.tags == 'success' %}var(--secondary-teal){% elif message.tags == 'error' %}var(--accent-pink){% else %}var(--accent-amber){% endif %};
+                        border: 1px solid {% if message.tags == 'success' %}var(--secondary-teal){% elif message.tags == 'error' %}var(--accent-pink){% else %}var(--accent-amber){% endif %};
+                        padding: 1rem; border-radius: 8px;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if preguntas %}
+            {% for pregunta in preguntas %}
+            <div class="pregunta-card" id="pregunta-{{ pregunta.id_pregunta }}">
+                <div class="pregunta-card-header">
+                    <p class="pregunta-enunciado">{{ forloop.counter }}. {{ pregunta.enunciado }}</p>
+                    <span class="pregunta-tipo">{{ pregunta.tipo_pregunta }}</span>
+                </div>
+                <div class="pregunta-opciones">
+                    <ul>
+                        {% for key, value in pregunta.respuestas_posibles.items %}
+                            <li class="{% if key == pregunta.respuesta_correcta %}correcta{% endif %}">
+                                {{ value }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="pregunta-actions">
+                    <button type="button" class="btn-modern btn-action-small btn-edit btn-editar-pregunta-js"
+                            data-pregunta-id="{{ pregunta.id_pregunta }}"
+                            data-enunciado="{{ pregunta.enunciado|escapejs }}"
+                            data-tipo-pregunta="{{ pregunta.tipo_pregunta }}"
+                            data-respuestas-json='{{ pregunta.respuestas_posibles_json }}'
+                            data-respuesta-correcta="{{ pregunta.respuesta_correcta|escapejs }}">
+                        <i class="bi bi-pencil-fill"></i> Editar
+                    </button>
+                    <form method="POST" action="{% url 'base:eliminar_pregunta_de_modulo' examen.id_examen pregunta.id_pregunta %}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta pregunta?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-modern btn-action-small btn-delete">
+                            <i class="bi bi-trash-fill"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-preguntas-card">
+                <i class="bi bi-question-circle-fill"></i>
+                <h3 class="no-preguntas-title">No hay preguntas en este módulo</h3>
+                <p class="no-preguntas-text">Añade la primera pregunta para este módulo de examen.</p>
+                <a href="{% url 'base:agregar_pregunta' examen.id_examen %}" class="btn-modern btn-add-new">
+                    <i class="bi bi-plus-circle-fill"></i> Agregar Pregunta
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal para Edición de Pregunta -->
+    <div id="modalEditarPregunta" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Pregunta</h5>
+                <button type="button" class="close-button" onclick="cerrarModalEdicion()">&times;</button>
+            </div>
+            <form id="formEditarPregunta" method="POST"> <!-- Se necesitará una URL para el action -->
+                {% csrf_token %}
+                <input type="hidden" name="pregunta_id_modal" id="pregunta_id_modal">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="enunciado_modal" class="form-label">Enunciado:</label>
+                        <textarea id="enunciado_modal" name="enunciado_modal" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_pregunta_modal" class="form-label">Tipo de Pregunta:</label>
+                        <select id="tipo_pregunta_modal" name="tipo_pregunta_modal" class="form-select">
+                            <option value="Opción Múltiple">Opción Múltiple</option>
+                            <option value="Verdadero/Falso">Verdadero/Falso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Opciones de Respuesta:</label>
+                        <div id="respuestas-container-modal">
+                            <!-- Opciones para editar se cargarán aquí -->
+                        </div>
+                        <button type="button" class="btn-modern btn-action-small" onclick="agregarRespuestaModal()" id="btnAgregarOpcionModal" style="background-color: var(--secondary-teal); color: var(--text-on-primary); font-size:0.8rem; padding: 0.4rem 0.8rem;">
+                            <i class="bi bi-plus-lg"></i> Agregar Opción
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modern btn-action-small btn-cancel" onclick="cerrarModalEdicion()">Cancelar</button>
+                    <button type="submit" class="btn-modern btn-action-small btn-save-changes">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // Variables globales para el modal de edición
+    let opcionIdCounterModal = 0;
+
+    function abrirModalEdicion(id, enunciado, tipo, respuestasPosiblesJsonString, respuestaCorrectaIndex) {
+        console.log("[INICIO] abrirModalEdicion llamada.");
+        console.log("  ID:", id);
+        console.log("  Enunciado:", enunciado);
+        console.log("  Tipo:", tipo);
+        console.log("  RespuestasPosiblesJSON (string):", respuestasPosiblesJsonString);
+        console.log("  RespuestaCorrectaIndex:", respuestaCorrectaIndex);
+
+        let respuestasPosibles;
+        try {
+            respuestasPosibles = JSON.parse(respuestasPosiblesJsonString);
+        } catch (e) {
+            console.error("Error al parsear respuestasPosibles JSON:", e);
+            console.error("String JSON problemático:", respuestasPosiblesJsonString);
+            // Mostrar un mensaje al usuario o manejar el error como sea apropiado
+            alert("Error al cargar los datos de la pregunta. Por favor, revisa la consola para más detalles.");
+            return; // Detener la ejecución si el JSON no es válido
+        }
+
+        console.log("Abriendo modal para ID:", id, "Tipo:", tipo);
+        console.log("Índice/Valor Correcto Esperado:", respuestaCorrectaIndex);
+        console.log("Respuestas Posibles Objeto:", respuestasPosibles);
+
+        document.getElementById('pregunta_id_modal').value = id;
+        document.getElementById('enunciado_modal').value = enunciado;
+        document.getElementById('tipo_pregunta_modal').value = tipo;
+        
+        const form = document.getElementById('formEditarPregunta');
+        form.action = `/modulo/${document.body.dataset.examenId}/pregunta/${id}/editar/`; // Establecer action dinámicamente
+
+        const respuestasContainerModal = document.getElementById('respuestas-container-modal');
+        respuestasContainerModal.innerHTML = ''; // Limpiar opciones previas
+        opcionIdCounterModal = 0;
+
+        if (tipo === "Opción Múltiple") {
+            Object.values(respuestasPosibles).forEach((textoOpcion, index) => {
+                let esLaCorrecta = index.toString() === respuestaCorrectaIndex.toString(); // Asegurar comparación de strings
+                console.log(`  Opción ${index} ("${textoOpcion}"): ¿Debería estar marcada? ${esLaCorrecta} (Comparando índice ${index} con ${respuestaCorrectaIndex})`);
+                agregarRespuestaModal(textoOpcion, esLaCorrecta, false, index);
+            });
+            document.getElementById('btnAgregarOpcionModal').style.display = 'inline-flex';
+        } else if (tipo === "Verdadero/Falso") {
+            agregarRespuestaModal("Verdadero", "Verdadero" === respuestaCorrectaIndex, true);
+            agregarRespuestaModal("Falso", "Falso" === respuestaCorrectaIndex, true);
+            document.getElementById('btnAgregarOpcionModal').style.display = 'none';
+        }
+        actualizarOpcionesUIModal();
+        document.getElementById('modalEditarPregunta').style.display = 'block';
+    }
+
+    function cerrarModalEdicion() {
+        document.getElementById('modalEditarPregunta').style.display = 'none';
+    }
+
+    function agregarRespuestaModal(valor = '', esCorrecta = false, esReadOnly = false, indice = -1) {
+        const container = document.getElementById("respuestas-container-modal");
+        const currentOptionCount = container.querySelectorAll(".option-row").length;
+        const optionActualIdCounter = opcionIdCounterModal++; // Usar un contador incremental para IDs únicos
+
+        const row = document.createElement("div");
+        row.className = "option-row"; // Reutilizar clase si es aplicable
+        row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.marginBottom = '0.75rem';
+
+        const radioInput = document.createElement("input");
+        radioInput.type = "radio";
+        radioInput.name = "respuesta_correcta_selector_modal";
+        radioInput.id = "radio_opcion_modal_" + optionActualIdCounter;
+        radioInput.className = "option-radio"; // Reutilizar clase
+        radioInput.style.marginRight = '0.5rem';
+        radioInput.checked = esCorrecta;
+        radioInput.required = true;
+
+        const textInput = document.createElement("input");
+        textInput.type = "text";
+        textInput.name = "respuestas_modal";
+        textInput.className = "form-control"; // Reutilizar clase
+        textInput.style.flexGrow = '1';
+        textInput.value = valor;
+        textInput.readOnly = esReadOnly;
+        textInput.required = true;
+        
+        const labelLetter = document.createElement("label");
+        labelLetter.className = "option-letter"; // Reutilizar clase
+        labelLetter.htmlFor = "radio_opcion_modal_" + optionActualIdCounter;
+        labelLetter.style.minWidth = '25px'; labelLetter.style.marginRight = '0.5rem';
+
+        row.appendChild(radioInput);
+        row.appendChild(labelLetter);
+        row.appendChild(textInput);
+
+        if (document.getElementById('tipo_pregunta_modal').value === "Opción Múltiple" && !esReadOnly) {
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "btn-modern btn-delete-option"; // Reutilizar clase
+            deleteButton.style.marginLeft = '0.5rem';
+            deleteButton.innerHTML = '<i class="bi bi-trash-fill"></i>';
+            deleteButton.onclick = function() { 
+                this.closest('.option-row').remove(); 
+                actualizarOpcionesUIModal(); 
+            };
+            row.appendChild(deleteButton);
+        }
+        container.appendChild(row);
+    }
+
+    function actualizarOpcionesUIModal() {
+        const container = document.getElementById("respuestas-container-modal");
+        const rows = container.querySelectorAll(".option-row");
+        const tipoPregunta = document.getElementById('tipo_pregunta_modal').value;
+        const addButton = document.getElementById('btnAgregarOpcionModal');
+
+        let primeraOpcionSeleccionada = false;
+        rows.forEach((row, index) => {
+            const letterDisplay = row.querySelector(".option-letter");
+            const textInput = row.querySelector("input[type='text'][name='respuestas_modal']");
+            const deleteBtn = row.querySelector(".btn-delete-option");
+            const radioBtn = row.querySelector(".option-radio");
+
+            if (tipoPregunta === "Opción Múltiple") {
+                const currentLetter = String.fromCharCode('A'.charCodeAt(0) + index);
+                if(letterDisplay) letterDisplay.textContent = currentLetter + ".";
+                if(textInput && !textInput.readOnly) textInput.placeholder = "Texto de la opción " + currentLetter;
+                if(radioBtn) {
+                    radioBtn.value = index.toString(); // Valor del radio es el índice
+                    console.log(`ActualizarUIModal: Radio para opción ${index}, valor asignado: ${radioBtn.value}, checked: ${radioBtn.checked}`);
+                }
+                if(deleteBtn) deleteBtn.disabled = rows.length <= 2;
+                
+                if(radioBtn && radioBtn.checked) {
+                    primeraOpcionSeleccionada = true;
+                    console.log(`ActualizarUIModal: Opción ${index} está marcada.`);
+                }
+
+            } else { // Verdadero/Falso
+                if(letterDisplay) letterDisplay.textContent = ""; 
+                if(radioBtn && textInput) radioBtn.value = textInput.value;
+                if(deleteBtn) deleteBtn.style.display = 'none';
+            }
+        });
+        
+        if (tipoPregunta === "Opción Múltiple" && !primeraOpcionSeleccionada && rows.length > 0) {
+            const primerRadio = rows[0].querySelector(".option-radio");
+            if (primerRadio) { 
+                console.log("ActualizarUIModal: Ninguna opción OM vino marcada. ¿Primer radio?", primerRadio.value, primerRadio.checked);
+            }
+        }
+
+        if (addButton) {
+            addButton.style.display = (tipoPregunta === "Opción Múltiple") ? 'inline-flex' : 'none';
+        }
+
+        const respuestasContainerModal = document.getElementById("respuestas-container-modal");
+        if (tipoPregunta === "Opción Múltiple") {
+            if (respuestasContainerModal.querySelectorAll(".option-row").length < 2) {
+                 agregarRespuestaModal('', false, false, respuestasContainerModal.querySelectorAll(".option-row").length);
+                 agregarRespuestaModal('', false, false, respuestasContainerModal.querySelectorAll(".option-row").length);
+            }
+        } else if (tipoPregunta === "Verdadero/Falso") {
+            if (respuestasContainerModal.querySelectorAll(".option-row").length === 0) {
+                 agregarRespuestaModal("Verdadero", true, true);
+                 agregarRespuestaModal("Falso", false, true);
+            }
+        }
+    }
+
+    document.getElementById('tipo_pregunta_modal').addEventListener('change', function() {
+        const tipo = this.value;
+        const respuestasContainerModal = document.getElementById('respuestas-container-modal');
+        respuestasContainerModal.innerHTML = '';
+        opcionIdCounterModal = 0;
+        if (tipo === "Opción Múltiple") {
+            agregarRespuestaModal('', false); 
+            agregarRespuestaModal('', false);
+        } else if (tipo === "Verdadero/Falso") {
+            agregarRespuestaModal("Verdadero", true, true);
+            agregarRespuestaModal("Falso", false, true);
+        }
+        actualizarOpcionesUIModal();
+    });
+
+    // Para pasar el examen_id a la función abrirModalEdicion si es necesario para la URL del form
+    document.body.dataset.examenId = "{{ examen.id_examen }}";
+
+    // Cerrar modal si se hace clic fuera de él
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalEditarPregunta');
+        if (event.target == modal) {
+            cerrarModalEdicion();
+        }
+    }
+
+    // Adjuntar event listeners a los botones de edición
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM completamente cargado y parseado. Adjuntando listeners...");
+        const editButtons = document.querySelectorAll('.btn-editar-pregunta-js');
+        console.log(`Encontrados ${editButtons.length} botones de edición.`);
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                console.log("Botón Editar (con listener JS) presionado.");
+                const preguntaId = this.dataset.preguntaId;
+                const enunciado = this.dataset.enunciado;
+                const tipoPregunta = this.dataset.tipoPregunta;
+                const respuestasJson = this.dataset.respuestasJson;
+                const respuestaCorrecta = this.dataset.respuestaCorrecta;
+
+                console.log("Datos para abrir modal:", { preguntaId, enunciado, tipoPregunta, respuestasJson, respuestaCorrecta });
+                abrirModalEdicion(preguntaId, enunciado, tipoPregunta, respuestasJson, respuestaCorrecta);
+            });
+        });
+    });
+</script>
+</body>
+</html> 

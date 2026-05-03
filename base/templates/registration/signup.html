@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="shadow-wrap">
+  <div class="form-wrap">
+    <h3>Bienvenido/a!!</h3>
+    <h4>Crea un nuevo usuario como profesor</h4>
+    <br>
+    <form method="POST">
+      {% csrf_token %}
+
+      <label for="id_username">Usuario:</label>
+      {{ form.username }}
+
+      <label for="id_password1">Contraseña:</label>
+      {{ form.password1 }}
+<br>
+      <label for="id_password2">Confirma contraseña:</label>
+      {{ form.password2 }}
+
+      <button type="submit">Enviar</button>
+    </form>
+
+    <a class="signup-link" href="{% url "base:login" %}">Inicia sesion</a>
+  </div>
+</div>
+{% endblock content %}

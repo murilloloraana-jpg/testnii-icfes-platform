@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if page_title %}
+    {{ page_title }} -
+  {% endif %}Sistema de Gestión Educativa
+{% endblock %}
+
+{% block content %}
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="{% url 'base:home' %}" class="sidebar-brand">
+        <i class="bi bi-mortarboard-fill"></i>
+        <span>EduAdmin</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Dashboard -->
+      <div class="nav-section">
+        <div class="nav-section-title">Principal</div>
+        <div class="nav-item">
+          <a href="{% url 'base:home' %}" class="nav-link">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Gestión Académica -->
+      <div class="nav-section">
+        <div class="nav-section-title">Gestión Académica</div>
+        <div class="nav-item">
+          <a href="{% url 'base:listar_estudiantes' %}" class="nav-link">
+            <i class="bi bi-people-fill"></i>
+            <span>Estudiantes</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'base:listar_profesores' %}" class="nav-link">
+            <i class="bi bi-person-badge-fill"></i>
+            <span>Profesores</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'base:listar_materias' %}" class="nav-link">
+            <i class="bi bi-book-fill"></i>
+            <span>Materias</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Evaluaciones -->
+      <div class="nav-section">
+        <div class="nav-section-title">Evaluaciones</div>
+        <div class="nav-item">
+          <a href="{% url 'base:listar_examenes' %}" class="nav-link">
+            <i class="bi bi-clipboard-check-fill"></i>
+            <span>Exámenes</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'base:listar_preguntas' %}" class="nav-link">
+            <i class="bi bi-question-circle-fill"></i>
+            <span>Preguntas</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'base:listar_resultados' %}" class="nav-link">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>Resultados</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Administración -->
+      <div class="nav-section">
+        <div class="nav-section-title">Administración</div>
+        <div class="nav-item">
+          <a href="{% url 'base:listar_administradores' %}" class="nav-link">
+            <i class="bi bi-shield-fill-check"></i>
+            <span>Administradores</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Otros -->
+      <div class="nav-section">
+        <div class="nav-section-title">Plataforma</div>
+        <div class="nav-item">
+          <a href="{% url 'base:estudiante_home' %}" class="nav-link">
+            <i class="bi bi-person-circle"></i>
+            <span>Portal Estudiante</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'base:panel_profesor' %}" class="nav-link">
+            <i class="bi bi-easel-fill"></i>
+            <span>Portal Profesor</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'base:inicio' %}" class="nav-link">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Inicio Público</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Bar Section (conditionally rendered) -->
+    {% block topbar_section %}
+      {# Este bloque estará vacío por defecto. Las plantillas hijas (como dashboard.html) #}
+      {# pueden definir aquí el topbar si lo necesitan. #}
+    {% endblock topbar_section %}
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+      <!-- Messages -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <i class="bi bi-{% if message.tags == 'success' %}
+                check-circle
+              {% elif message.tags == 'error' %}
+                exclamation-triangle
+              {% elif message.tags == 'warning' %}
+                exclamation-triangle
+              {% else %}
+                info-circle
+              {% endif %} me-2">
+
+            </i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Page Content -->
+      {% block page_content %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="h3 mb-1">
+              {% block content_title %}
+                Bienvenido
+              {% endblock %}
+            </h2>
+            <p class="text-muted mb-0">
+              {% block content_subtitle %}
+                Gestiona tu sistema educativo
+              {% endblock %}
+            </p>
+          </div>
+          {% block page_actions %}
+          {% endblock %}
+        </div>
+
+        {% block main_content %}
+        {% endblock %}
+      {% endblock %}
+    </div>
+  </main>
+
+  {% block extra_modals %}
+  {% endblock %}
+
+  {% block extra_css %}
+    <style>
+      /* Dejar aquí solo los estilos que NO sean los que introdujiste para las nuevas tarjetas */
+      /* O para una prueba rápida, comentar todo el contenido de <style> dentro de este bloque */
+      /*
+      .avatar-circle { ... }
+      .text-sm { ... }
+      */
+    </style>
+  {% endblock %}
+{% endblock %}

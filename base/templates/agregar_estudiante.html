@@ -1,0 +1,366 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Agregar Estudiante
+{% endblock %}
+
+{% block page_content %}
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-1">Agregar Nuevo Estudiante</h2>
+      <p class="text-muted mb-0">Completa la información del estudiante para registrarlo en el sistema</p>
+    </div>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a href="{% url 'base:home' %}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{% url 'base:listar_estudiantes' %}">Estudiantes</a>
+        </li>
+        <li class="breadcrumb-item active">Agregar</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Form Card -->
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <div class="icon-wrapper bg-primary text-white me-3">
+              <i class="bi bi-person-plus-fill"></i>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Información del Estudiante</h5>
+              <small class="text-muted">Todos los campos marcados con * son obligatorios</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form method="POST" id="studentForm" novalidate>
+            {% csrf_token %}
+
+            <!-- Personal Information Section -->
+            <div class="form-section mb-5">
+              <div class="section-header mb-4">
+                <h6 class="section-title">
+                  <i class="bi bi-person-fill me-2"></i>
+                  Información Personal
+                </h6>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                  <input type="text" id="nombre" name="nombre" class="form-control" required placeholder="Ingrese el nombre" />
+                  <div class="invalid-feedback">Por favor ingrese el nombre del estudiante.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="apellido" class="form-label">Apellido <span class="text-danger">*</span></label>
+                  <input type="text" id="apellido" name="apellido" class="form-control" required placeholder="Ingrese el apellido" />
+                  <div class="invalid-feedback">Por favor ingrese el apellido del estudiante.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento <span class="text-danger">*</span></label>
+                  <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" required />
+                  <div class="invalid-feedback">Por favor seleccione la fecha de nacimiento.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="genero" class="form-label">Género <span class="text-danger">*</span></label>
+                  <select id="genero" name="genero" class="form-select" required>
+                    <option value="">Seleccione una opción</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                    <option value="O">Otro</option>
+                  </select>
+                  <div class="invalid-feedback">Por favor seleccione el género.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="identificacion" class="form-label">Número de Identificación <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                    <input type="text" id="identificacion" name="identificacion" class="form-control" required placeholder="Ej: 1234567890" />
+                  </div>
+                  <div class="invalid-feedback">Por favor ingrese el número de identificación.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="form-section mb-5">
+              <div class="section-header mb-4">
+                <h6 class="section-title">
+                  <i class="bi bi-envelope-fill me-2"></i>
+                  Información de Contacto
+                </h6>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="correo" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" id="correo" name="correo" class="form-control" required placeholder="estudiante@ejemplo.com" />
+                  </div>
+                  <div class="invalid-feedback">Por favor ingrese un correo electrónico válido.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="telefono" class="form-label">Teléfono</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                    <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="(123) 456-7890" />
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label for="direccion" class="form-label">Dirección</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                    <textarea id="direccion" name="direccion" class="form-control" rows="2" placeholder="Dirección completa del estudiante"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Academic Information Section -->
+            <div class="form-section mb-5">
+              <div class="section-header mb-4">
+                <h6 class="section-title">
+                  <i class="bi bi-mortarboard-fill me-2"></i>
+                  Información Académica
+                </h6>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="institucion" class="form-label">Institución Educativa</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-building"></i></span>
+                    <input type="text" id="institucion" name="institucion" class="form-control" placeholder="Nombre de la institución" />
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="tipo_institucion" class="form-label">Tipo de Institución</label>
+                  <select id="tipo_institucion" name="tipo_institucion" class="form-select">
+                    <option value="">Seleccione una opción</option>
+                    <option value="Pública">Pública</option>
+                    <option value="Privada">Privada</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="grado" class="form-label">Grado Actual</label>
+                  <select id="grado" name="grado" class="form-select">
+                    <option value="">Seleccione el grado</option>
+                    <option value="9">Noveno (9°)</option>
+                    <option value="10">Décimo (10°)</option>
+                    <option value="11">Undécimo (11°)</option>
+                    <option value="Universidad">Universitario</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="fecha_inscripcion" class="form-label">Fecha de Inscripción</label>
+                  <input type="datetime-local" id="fecha_inscripcion" name="fecha_inscripcion" class="form-control" />
+                  <div class="form-text">Si se deja vacío, se usará la fecha actual</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+              <a href="{% url 'base:listar_estudiantes' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>
+                Cancelar
+              </a>
+
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary" id="clearForm">
+                  <i class="bi bi-arrow-clockwise me-2"></i>
+                  Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-2"></i>
+                  Registrar Estudiante
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <div class="mb-3">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+          </div>
+          <h5>¡Estudiante Registrado!</h5>
+          <p class="text-muted mb-0">El estudiante ha sido agregado exitosamente al sistema.</p>
+        </div>
+        <div class="modal-footer justify-content-center border-0">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    
+    .form-section {
+      position: relative;
+    }
+    
+    .section-header {
+      position: relative;
+    }
+    
+    .section-title {
+      color: #374151;
+      font-weight: 600;
+      margin: 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-control,
+    .form-select {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0.75rem;
+      transition: all 0.2s ease;
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    }
+    
+    .input-group-text {
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      color: #6b7280;
+    }
+    
+    .btn {
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+    }
+    
+    .invalid-feedback {
+      font-size: 0.875rem;
+    }
+    
+    .form-text {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    
+    @media (max-width: 768px) {
+      .form-section {
+        margin-bottom: 2rem !important;
+      }
+    
+      .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    
+      .d-flex.gap-2 {
+        justify-content: stretch;
+      }
+    
+      .d-flex.gap-2 .btn {
+        flex: 1;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('studentForm')
+      const clearButton = document.getElementById('clearForm')
+    
+      // Form validation
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      })
+    
+      // Clear form
+      clearButton.addEventListener('click', function () {
+        form.reset()
+        form.classList.remove('was-validated')
+      })
+    
+      // Auto-capitalize names
+      const nameInputs = ['nombre', 'apellido']
+      nameInputs.forEach((id) => {
+        const input = document.getElementById(id)
+        if (input) {
+          input.addEventListener('input', function () {
+            this.value = this.value.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase())
+          })
+        }
+      })
+    
+      // Format identification number
+      const idInput = document.getElementById('identificacion')
+      if (idInput) {
+        idInput.addEventListener('input', function () {
+          this.value = this.value.replace(/[^0-9]/g, '')
+        })
+      }
+    
+      // Set default date to today
+      const fechaInscripcion = document.getElementById('fecha_inscripcion')
+      if (fechaInscripcion && !fechaInscripcion.value) {
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0')
+        const day = String(now.getDate()).padStart(2, '0')
+        const hours = String(now.getHours()).padStart(2, '0')
+        const minutes = String(now.getMinutes()).padStart(2, '0')
+        fechaInscripcion.value = `${year}-${month}-${day}T${hours}:${minutes}`
+      }
+    })
+  </script>
+{% endblock %}

@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard Estudiante - TestNii</title>
+
+    <!-- Scripts y estilos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <style>
+      :root {
+        /* Nueva paleta de colores centrada en el morado */
+        --primary-purple: #7c3aed; /* Morado principal */
+        --light-purple: #a78bfa; /* Morado claro para acentos o fondos secundarios */
+        --lighter-purple: #ede9fe; /* Morado muy pálido, casi lavanda, para fondos sutiles */
+        --darker-purple: #5b21b6; /* Morado más oscuro para hover o elementos de énfasis */
+      
+        /* Nuevos colores secundarios Teal */
+        --secondary-teal: #14b8a6; /* Teal principal */
+        --light-teal: #5eead4; /* Teal claro para acentos */
+        --lighter-teal: #ccfbf1; /* Teal muy pálido para fondos o badges sutiles */
+        --text-on-teal: #ffffff; /* Texto blanco sobre fondos teal */
+      
+        --page-bg: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); /* Fondo de página lavanda muy claro */
+        --card-bg: #ffffff; /* Fondo de tarjeta blanco sólido */
+        --card-border-subtle: #ddd6fe; /* Borde sutil para tarjetas, derivado del morado */
+      
+        --text-primary-color: #1f2937; /* Casi negro para texto principal, buena legibilidad */
+        --text-secondary-color: #6b7280; /* Gris para texto secundario */
+        --text-on-purple: #ffffff; /* Texto blanco sobre fondos morados */
+      
+        --shadow-color: rgba(91, 33, 182, 0.08); /* Sombra suave con tinte morado */
+        --strong-shadow-color: rgba(91, 33, 182, 0.12);
+      
+        /* Variables de glassmorphism (se pueden mantener si se usan sutilmente) */
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+      }
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        background: var(--page-bg);
+        min-height: 100vh;
+        color: var(--text-primary-color);
+      }
+      
+      /* Navbar moderna */
+      .modern-navbar {
+        background: rgba(255, 255, 255, 0.9); /* Blanco semi-transparente */
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid var(--lighter-purple);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      
+      .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--primary-purple); /* Color morado principal para la marca */
+      }
+      
+      .btn-glassmorphism {
+        /* Usado para botones de la navbar */
+        background: transparent;
+        border: 1px solid var(--lighter-purple);
+        border-radius: 10px;
+        color: var(--primary-purple);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+      
+      .btn-glassmorphism:hover {
+        background: var(--lighter-purple);
+        color: var(--darker-purple);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px var(--shadow-color);
+      }
+      
+      .btn-glassmorphism-teal {
+        background: transparent;
+        border: 1px solid var(--light-teal);
+        border-radius: 10px;
+        color: var(--secondary-teal);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+      
+      .btn-glassmorphism-teal:hover {
+        background: var(--lighter-teal);
+        color: var(--secondary-teal); /* Mantener el color del texto al hacer hover */
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(20, 184, 166, 0.2); /* Sombra con tinte teal */
+      }
+      
+      /* Tarjetas rediseñadas: sólidas, limpias */
+      .main-card {
+        /* Nueva clase genérica para tarjetas principales */
+        background: var(--card-bg);
+        border: 1px solid var(--card-border-subtle);
+        border-radius: 20px; /* Bordes más redondeados */
+        padding: 2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px var(--shadow-color);
+      }
+      
+      .main-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px var(--strong-shadow-color);
+      }
+      
+      .glass-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border-subtle);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px var(--shadow-color);
+      }
+      .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px var(--strong-shadow-color);
+      }
+      
+      .stat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border-subtle);
+        border-left: 4px solid var(--primary-purple); /* Acento morado a la izquierda */
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        position: relative; /* Para el icono de esquina */
+        overflow: hidden; /* Para efecto shimmer si se mantiene */
+      }
+      
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px var(--strong-shadow-color);
+      }
+      
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(124, 58, 237, 0.05), /* Tinte morado para el shimmer */ transparent);
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+        opacity: 0;
+      }
+      .stat-card:hover::before {
+        animation: shimmer 1.5s ease infinite;
+      }
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%) rotate(45deg);
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(100%) rotate(45deg);
+          opacity: 0;
+        }
+      }
+      
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        color: var(--text-secondary-color);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85rem;
+      }
+      
+      .subject-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 100%;
+        box-shadow: 0 6px 18px var(--shadow-color);
+        border: 1px solid var(--card-border-subtle);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      
+      .subject-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 35px var(--strong-shadow-color);
+      }
+      
+      .subject-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-purple);
+        transition: all 0.3s ease;
+      }
+      
+      .subject-card:hover .subject-icon {
+        transform: scale(1.1);
+      }
+      
+      .subject-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text-primary-color);
+      }
+      
+      .level-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+        background: var(--lighter-purple); /* Fondo morado pálido por defecto */
+        color: var(--primary-purple); /* Texto morado por defecto */
+      }
+      
+      .progress-ring {
+        width: 100px;
+        height: 100px;
+        margin: 0.75rem auto;
+        position: relative;
+      }
+      
+      .progress-circle {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: conic-gradient(var(--primary-purple) 0deg, var(--lighter-purple) 360deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      
+      .progress-circle::before {
+        content: '';
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        background: var(--card-bg);
+        border-radius: 50%;
+      }
+      
+      .progress-text {
+        position: absolute;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--primary-purple);
+        z-index: 2;
+      }
+      
+      .achievement-badge {
+        /* Insignia de logro por defecto (estrella morada) */
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 36px;
+        height: 36px;
+        background: var(--primary-purple);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-on-purple);
+        font-size: 1.1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+      
+      .modern-table {
+        background: var(--card-bg);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px var(--shadow-color);
+        border: 1px solid var(--card-border-subtle);
+      }
+      
+      .table-header {
+        background: var(--primary-purple);
+        color: var(--text-on-purple);
+        padding: 1rem;
+        font-weight: 600;
+      }
+      
+      .exam-row {
+        padding: 1rem;
+        border-bottom: 1px solid var(--lighter-purple);
+        transition: background-color 0.2s ease, transform 0.2s ease;
+      }
+      .exam-row:last-child {
+        border-bottom: none;
+      }
+      .exam-row:hover {
+        background: var(--lighter-purple);
+        transform: scale(1.005);
+      }
+      
+      .modern-tabs .nav-link {
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 1.2rem;
+        margin-right: 0.5rem;
+        background: var(--lighter-purple);
+        color: var(--primary-purple);
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+      
+      .modern-tabs .nav-link.active {
+        background: var(--primary-purple);
+        color: var(--text-on-purple);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+      }
+      
+      .fade-in {
+        animation: fadeIn 0.8s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .slide-in-left {
+        animation: slideInLeft 0.8s ease-out;
+      }
+      @keyframes slideInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      .btn-modern {
+        background: var(--primary-purple);
+        border: none;
+        border-radius: 10px;
+        color: var(--text-on-purple);
+        font-weight: 600;
+        padding: 0.7rem 1.4rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+      
+      .btn-modern:hover {
+        color: var(--text-on-purple);
+        background: var(--darker-purple);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(91, 33, 182, 0.3);
+      }
+      
+      .btn-outline-modern {
+        /* Sigue siendo morado para acciones principales como Salir */
+        background: transparent;
+        border: 2px solid var(--primary-purple);
+        border-radius: 10px;
+        color: var(--primary-purple);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+      
+      .btn-outline-modern:hover {
+        background: var(--primary-purple);
+        color: var(--text-on-purple);
+        transform: translateY(-2px);
+      }
+      
+      .btn-outline-teal {
+        /* Nuevo botón outline teal */
+        background: transparent;
+        border: 2px solid var(--secondary-teal);
+        border-radius: 10px;
+        color: var(--secondary-teal);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+      
+      .btn-outline-teal:hover {
+        background: var(--secondary-teal);
+        color: var(--text-on-teal);
+        transform: translateY(-2px);
+      }
+      
+      .greeting-header h1 {
+        background: linear-gradient(45deg, var(--primary-purple), var(--light-purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .greeting-header .badge[style*='background: var(--lighter-purple)'] {
+        background: var(--lighter-purple) !important; /* Mantenemos morado para este, o cambiar si se desea */
+        color: var(--primary-purple) !important;
+      }
+      .greeting-header .badge[style*='background: var(--lighter-teal)'] {
+        /* Para los badges de inst y grado */
+        background: var(--lighter-teal) !important;
+        color: var(--secondary-teal) !important;
+      }
+      .greeting-header .level-badge[style*='background: linear-gradient'] {
+        /* Mantenemos el gradiente morado para Nivel General */
+        background: linear-gradient(45deg, var(--primary-purple), var(--light-purple)) !important;
+        color: var(--text-on-purple) !important;
+      }
+      
+      .section-title {
+        color: var(--text-primary-color);
+        font-weight: 600;
+      }
+      .section-title i {
+        color: var(--secondary-teal); /* Cambiado a Teal */
+      }
+      
+      .history-title {
+        color: var(--text-primary-color);
+        font-weight: 600;
+      }
+      .history-title i {
+        color: var(--secondary-teal); /* Cambiado a Teal */
+      }
+      
+      .exam-row .badge[style*='background: var(--lighter-purple)'] {
+        /* Unificado */
+        background: var(--lighter-purple) !important;
+        color: var(--primary-purple) !important;
+      }
+      .exam-row .fw-bold[style*='color: var(--primary-purple)'] {
+        /* Unificado */
+        color: var(--primary-purple) !important;
+      }
+      
+      @media (max-width: 768px) {
+        .stat-number {
+          font-size: 2rem;
+        }
+        .subject-card {
+          margin-bottom: 1rem;
+        }
+        .glass-card,
+        .main-card {
+          padding: 1.5rem;
+        }
+        .modern-navbar .d-flex.gap-2 {
+          flex-direction: column;
+          align-items: stretch !important;
+        }
+        .modern-navbar .d-flex.gap-2 .btn {
+          width: 100%;
+          margin-bottom: 0.5rem;
+        }
+        .modern-navbar .d-flex.gap-2 .btn:last-child {
+          margin-bottom: 0;
+        }
+      }
+      
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid var(--lighter-purple);
+        border-top: 4px solid var(--primary-purple);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar moderna -->
+    <nav class="modern-navbar">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <a class="navbar-brand" href="#">
+            <i class="bi bi-mortarboard-fill me-2"></i>
+            TestNii Learning
+          </a>
+          <div class="d-flex gap-2">
+            <a href="{% url 'chat:chat' %}" class="btn btn-glassmorphism-teal"><i class="bi bi-chat-dots me-1"></i> Chat AI</a>
+            <a href="{% url 'base:examenes_profesores' %}" class="btn btn-glassmorphism-teal"><i class="bi bi-clipboard-check me-1"></i> Exámenes</a>
+            <a href="{% url 'base:logout_estudiante' %}" class="btn btn-outline-modern"><i class="bi bi-box-arrow-right me-1"></i> Salir</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-4">
+      <!-- Header con saludo personalizado -->
+      <div class="row mb-5" data-aos="fade-down">
+        <div class="col-12">
+          <div class="glass-card text-center greeting-header">
+            <h1 class="display-4 mb-3">¡Hola, {{ estudiante.nombre }}! 🚀</h1>
+            <p class="lead text-muted">Continúa tu viaje de aprendizaje. ¡Cada día eres más inteligente!</p>
+            <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap">
+              <div class="achievement-badge" style="background-color: var(--secondary-teal); color: var(--text-on-teal);">
+                <i class="bi bi-trophy-fill"></i>
+              </div>
+              <span class="badge level-badge" style="
+                  background: linear-gradient(
+                    45deg,
+                    var(--primary-purple),
+                    var(--light-purple)
+                  );
+                  color: white;
+                ">Nivel {{ nivel_general }} - {{ nivel_texto }}</span>
+              {% if estudiante_info.institucion %}
+                <span class="badge" style="
+                  background: var(--lighter-teal);
+                  color: var(--secondary-teal);
+                "><i class="bi bi-building me-1"></i>{{ estudiante_info.institucion }}</span>
+              {% endif %} {% if estudiante_info.grado %}
+                <span class="badge" style="
+                  background: var(--lighter-teal);
+                  color: var(--secondary-teal);
+                "><i class="bi bi-mortarboard me-1"></i>{{ estudiante_info.grado }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas principales -->
+      <div class="row g-4 mb-5" data-aos="fade-up">
+        <div class="col-md-3 col-sm-6">
+          <div class="stat-card" style="border-left: 4px solid var(--primary-purple)">
+            <div class="stat-number">{{ puntaje_global }}</div>
+            <div class="stat-label">Mejor Puntaje Global</div>
+            <i class="bi bi-trophy-fill position-absolute" style="top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--secondary-teal);"></i>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="stat-card" style="border-left: 4px solid var(--primary-purple)">
+            <div class="stat-number">{{ nivel_general }}</div>
+            <div class="stat-label">Nivel Actual - {{ nivel_texto }}</div>
+            <i class="bi bi-graph-up position-absolute" style="top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--secondary-teal);"></i>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="stat-card" style="border-left: 4px solid var(--primary-purple)">
+            <div class="stat-number">{{ total_simulacros }}</div>
+            <div class="stat-label">Simulacros y Examenes Completados</div>
+            <i class="bi bi-clipboard-check position-absolute" style="top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--secondary-teal);"></i>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="stat-card" style="border-left: 4px solid var(--primary-purple)">
+            <div class="stat-number">{{ tiempo_promedio }}s</div>
+            <div class="stat-label">Duración Promedio/pregunta</div>
+            <i class="bi bi-clock position-absolute" style="top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--secondary-teal);"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Materias con progreso circular -->
+      <div class="row mb-5" data-aos="fade-up" data-aos-delay="200">
+        <div class="col-12">
+          <h2 class="text-center mb-4 section-title">
+            <i class="bi bi-books me-2"></i>
+            Tu Progreso por Materia
+          </h2>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-5">
+        <!-- Lectura Crítica -->
+        <div class="col-lg-2 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="100">
+          <div class="subject-card" style="
+              background: linear-gradient(
+                135deg,
+                var(--lighter-purple),
+                rgba(255, 255, 255, 0.9)
+              );
+            ">
+            <div class="subject-icon" style="color: var(--primary-purple)">
+              <i class="bi bi-journal-text"></i>
+            </div>
+            <h5 class="subject-title">Lectura Crítica</h5>
+            <div class="progress-ring">
+              <div class="progress-circle" id="progress-lectura">
+                <div class="progress-text">{{ progreso_materias.lectura }}%</div>
+              </div>
+            </div>
+            <div class="level-badge" style="
+                background: var(--lighter-purple);
+                color: var(--primary-purple);
+              ">Nivel {{ niveles_materias.lectura }}</div>
+            <a href="{% url 'base:iniciar_simulacro' 'Lectura Critica' %}" class="btn btn-modern w-100 mt-2"><i class="bi bi-play-fill me-1"></i> Practicar</a>
+            {% if mejores_puntajes.lectura >= 80 %}
+              <div class="achievement-badge" style="background-color: var(--secondary-teal); color: var(--text-on-teal);">
+                <i class="bi bi-star-fill"></i>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Matemáticas -->
+        <div class="col-lg-2 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="200">
+          <div class="subject-card" style="
+              background: linear-gradient(
+                135deg,
+                var(--lighter-purple),
+                rgba(255, 255, 255, 0.9)
+              );
+            ">
+            <div class="subject-icon" style="color: var(--primary-purple)">
+              <i class="bi bi-calculator"></i>
+            </div>
+            <h5 class="subject-title">Matemáticas</h5>
+            <div class="progress-ring">
+              <div class="progress-circle" id="progress-matematicas">
+                <div class="progress-text">{{ progreso_materias.matematicas }}%</div>
+              </div>
+            </div>
+            <div class="level-badge" style="
+                background: var(--lighter-purple);
+                color: var(--primary-purple);
+              ">Nivel {{ niveles_materias.matematicas }}</div>
+            <a href="{% url 'base:iniciar_simulacro' 'Matematicas' %}" class="btn btn-modern w-100 mt-2"><i class="bi bi-play-fill me-1"></i> Practicar</a>
+            {% if mejores_puntajes.matematicas >= 80 %}
+              <div class="achievement-badge" style="background-color: var(--secondary-teal); color: var(--text-on-teal);">
+                <i class="bi bi-star-fill"></i>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Ciencias Sociales -->
+        <div class="col-lg-2 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="300">
+          <div class="subject-card" style="
+              background: linear-gradient(
+                135deg,
+                var(--lighter-purple),
+                rgba(255, 255, 255, 0.9)
+              );
+            ">
+            <div class="subject-icon" style="color: var(--primary-purple)">
+              <i class="bi bi-globe-americas"></i>
+            </div>
+            <h5 class="subject-title">Ciencias Sociales</h5>
+            <div class="progress-ring">
+              <div class="progress-circle" id="progress-sociales">
+                <div class="progress-text">{{ progreso_materias.sociales }}%</div>
+              </div>
+            </div>
+            <div class="level-badge" style="
+                background: var(--lighter-purple);
+                color: var(--primary-purple);
+              ">Nivel {{ niveles_materias.sociales }}</div>
+            <a href="{% url 'base:iniciar_simulacro' 'Ciencias Sociales' %}" class="btn btn-modern w-100 mt-2"><i class="bi bi-play-fill me-1"></i> Practicar</a>
+            {% if mejores_puntajes.sociales >= 80 %}
+              <div class="achievement-badge" style="background-color: var(--secondary-teal); color: var(--text-on-teal);">
+                <i class="bi bi-star-fill"></i>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Ciencias Naturales -->
+        <div class="col-lg-2 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="400">
+          <div class="subject-card" style="
+              background: linear-gradient(
+                135deg,
+                var(--lighter-purple),
+                rgba(255, 255, 255, 0.9)
+              );
+            ">
+            <div class="subject-icon" style="color: var(--primary-purple)">
+              <i class="bi bi-tree"></i>
+            </div>
+            <h5 class="subject-title">Ciencias Naturales</h5>
+            <div class="progress-ring">
+              <div class="progress-circle" id="progress-naturales">
+                <div class="progress-text">{{ progreso_materias.ciencias }}%</div>
+              </div>
+            </div>
+            <div class="level-badge" style="
+                background: var(--lighter-purple);
+                color: var(--primary-purple);
+              ">Nivel {{ niveles_materias.ciencias }}</div>
+            <a href="{% url 'base:iniciar_simulacro' 'Ciencias Naturales' %}" class="btn btn-modern w-100 mt-2"><i class="bi bi-play-fill me-1"></i> Practicar</a>
+            {% if mejores_puntajes.ciencias >= 80 %}
+              <div class="achievement-badge" style="background-color: var(--secondary-teal); color: var(--text-on-teal);">
+                <i class="bi bi-star-fill"></i>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Inglés -->
+        <div class="col-lg-2 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="500">
+          <div class="subject-card" style="
+              background: linear-gradient(
+                135deg,
+                var(--lighter-purple),
+                rgba(255, 255, 255, 0.9)
+              );
+            ">
+            <div class="subject-icon" style="color: var(--primary-purple)">
+              <i class="bi bi-translate"></i>
+            </div>
+            <h5 class="subject-title">Inglés</h5>
+            <div class="progress-ring">
+              <div class="progress-circle" id="progress-ingles">
+                <div class="progress-text">{{ progreso_materias.ingles }}%</div>
+              </div>
+            </div>
+            <div class="level-badge" style="
+                background: var(--lighter-purple);
+                color: var(--primary-purple);
+              ">Nivel {{ niveles_materias.ingles }}</div>
+            <a href="{% url 'base:iniciar_simulacro' 'Ingles' %}" class="btn btn-modern w-100 mt-2"><i class="bi bi-play-fill me-1"></i> Practicar</a>
+            {% if mejores_puntajes.ingles >= 80 %}
+              <div class="achievement-badge" style="background-color: var(--secondary-teal); color: var(--text-on-teal);">
+                <i class="bi bi-crown-fill"></i>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Simulacro General -->
+        <div class="col-lg-2 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="600">
+          <div class="subject-card" style="
+              background: linear-gradient(
+                135deg,
+                var(--lighter-purple),
+                rgba(255, 255, 255, 0.9)
+              );
+              border: 2px solid var(--primary-purple);
+            ">
+            <div class="subject-icon" style="color: var(--primary-purple)">
+              <i class="bi bi-lightning-charge-fill"></i>
+            </div>
+            <h5 class="subject-title">Simulacros Completo</h5>
+            <div class="progress-ring">
+              <div class="progress-circle" id="progress-general">
+                <div class="progress-text">{{ progreso_materias.general }}%</div>
+              </div>
+            </div>
+            <div class="level-badge" style="
+                background: var(--lighter-purple);
+                color: var(--primary-purple);
+              ">Porcentaje completo</div>
+
+            {% if puntaje_global >= 80 %}
+              <div class="achievement-badge" style="background: linear-gradient(45deg, #ffd700, #ffa500)">
+                <i class="bi bi-gem"></i>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Historial de exámenes -->
+      <div class="row" data-aos="fade-up" data-aos-delay="300">
+        <div class="col-12">
+          <div class="glass-card">
+            <h3 class="mb-4 history-title">
+              <i class="bi bi-clock-history me-2"></i>
+              Historial de Simulacros
+            </h3>
+
+            <!-- Tabs modernos -->
+            <ul class="nav nav-tabs modern-tabs mb-4" id="examTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="lectura-tab" data-bs-toggle="tab" data-bs-target="#lectura" type="button" role="tab"><i class="bi bi-journal-text me-1"></i> Lectura Crítica</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="matematicas-tab" data-bs-toggle="tab" data-bs-target="#matematicas" type="button" role="tab"><i class="bi bi-calculator me-1"></i> Matemáticas</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sociales-tab" data-bs-toggle="tab" data-bs-target="#sociales" type="button" role="tab"><i class="bi bi-globe-americas me-1"></i> Sociales</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ciencias-tab" data-bs-toggle="tab" data-bs-target="#ciencias" type="button" role="tab"><i class="bi bi-tree me-1"></i> Ciencias</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ingles-tab" data-bs-toggle="tab" data-bs-target="#ingles" type="button" role="tab"><i class="bi bi-translate me-1"></i> Inglés</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="examTabsContent">
+              <div class="tab-pane fade show active" id="lectura" role="tabpanel">
+                <div class="modern-table">
+                  {% if resultados_lectura %}
+                    {% for resultado in resultados_lectura %}
+                      <div class="exam-row d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="me-3">
+                            <div class="badge" style="background: var(--lighter-purple); color: var(--primary-purple); font-size: 0.9rem;">{{ resultado.fecha_resultado|date:'d/m/Y' }}</div>
+                          </div>
+                          <div>
+                            <h6 class="mb-1">{{ resultado.examen.tipo|default:'Simulacro de Lectura Crítica' }}</h6>
+                            <small class="text-muted">{{ resultado.fecha_resultado|time:'H:i'|default:'14:30' }}</small>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="text-center">
+                            <div class="fw-bold" style="color: var(--primary-purple);">{{ resultado.lectura_critica }}</div>
+                            <small class="text-muted">Puntaje</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.nivel_lectura }}</div>
+                            <small class="text-muted">Nivel</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.total_preguntas_examen|default:0 }}</div>
+                            <small class="text-muted">Preguntas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-success">{{ resultado.correctas_reales|default:0 }}</div>
+                            <small class="text-muted">Correctas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-danger">{{ resultado.incorrectas_reales|default:0 }}</div>
+                            <small class="text-muted">Incorrectas</small>
+                          </div>
+                          <div class="d-flex gap-2">
+                            <form method="POST" action="{% url 'base:eliminar_resultado_historial' resultado.id_resultado %}" style="display: inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este resultado?');"><i class="bi bi-trash"></i></button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <div class="text-center py-5">
+                      <i class="bi bi-clipboard-x" style="
+                        font-size: 3rem;
+                        color: var(--text-secondary-color);
+                      "></i>
+                      <h5 class="mt-3 text-muted">No hay simulacros de Lectura Crítica aún</h5>
+                      <p class="text-muted">¡Comienza tu primer simulacro para ver tu progreso!</p>
+                      <a href="{% url 'base:iniciar_simulacro' 'Lectura Critica' %}" class="btn btn-modern"><i class="bi bi-play-fill me-1"></i> Iniciar Simulacro</a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="tab-pane fade" id="matematicas" role="tabpanel">
+                <div class="modern-table">
+                  {% if resultados_matematicas %}
+                    {% for resultado in resultados_matematicas %}
+                      <div class="exam-row d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="me-3">
+                            <div class="badge" style="
+                                background: var(--lighter-purple);
+                                color: var(--primary-purple);
+                                font-size: 0.9rem;
+                              ">{{ resultado.fecha_resultado|date:'d/m/Y' }}</div>
+                          </div>
+                          <div>
+                            <h6 class="mb-1">{{ resultado.examen.tipo|default:'Simulacro de Matemáticas' }}</h6>
+                            <small class="text-muted">{{ resultado.fecha_resultado|time:'H:i'|default:'14:30' }}</small>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="text-center">
+                            <div class="fw-bold" style="color: var(--primary-purple)">{{ resultado.matematicas }}</div>
+                            <small class="text-muted">Puntaje</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.nivel_matematicas }}</div>
+                            <small class="text-muted">Nivel</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.total_preguntas_examen|default:0 }}</div>
+                            <small class="text-muted">Preguntas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-success">{{ resultado.correctas_reales|default:0 }}</div>
+                            <small class="text-muted">Correctas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-danger">{{ resultado.incorrectas_reales|default:0 }}</div>
+                            <small class="text-muted">Incorrectas</small>
+                          </div>
+                          <div class="d-flex gap-2">
+                            <form method="POST" action="{% url 'base:eliminar_resultado_historial' resultado.id_resultado %}" style="display: inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este resultado?');"><i class="bi bi-trash"></i></button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <div class="text-center py-5">
+                      <i class="bi bi-calculator" style="font-size: 3rem; color: var(--secondary-teal)"></i>
+                      <h5 class="mt-3">No hay simulacros de Matemáticas aún</h5>
+                      <p class="text-muted">¡Comienza tu primer simulacro para ver tu progreso!</p>
+                      <a href="{% url 'base:iniciar_simulacro' 'Matematicas' %}" class="btn btn-modern"><i class="bi bi-play-fill me-1"></i> Iniciar Simulacro</a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Ciencias Sociales -->
+              <div class="tab-pane fade" id="sociales" role="tabpanel">
+                <div class="modern-table">
+                  {% if resultados_sociales %}
+                    {% for resultado in resultados_sociales %}
+                      <div class="exam-row d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="me-3">
+                            <div class="badge" style="
+                                background: var(--lighter-purple);
+                                color: var(--primary-purple);
+                                font-size: 0.9rem;
+                              ">{{ resultado.fecha_resultado|date:'d/m/Y' }}</div>
+                          </div>
+                          <div>
+                            <h6 class="mb-1">{{ resultado.examen.tipo|default:'Simulacro de Ciencias Sociales' }}</h6>
+                            <small class="text-muted">{{ resultado.fecha_resultado|time:'H:i'|default:'14:30' }}</small>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="text-center">
+                            <div class="fw-bold" style="color: var(--primary-purple)">{{ resultado.sociales_ciudadanas }}</div>
+                            <small class="text-muted">Puntaje</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.nivel_sociales }}</div>
+                            <small class="text-muted">Nivel</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.total_preguntas_examen|default:0 }}</div>
+                            <small class="text-muted">Preguntas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-success">{{ resultado.correctas_reales|default:0 }}</div>
+                            <small class="text-muted">Correctas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-danger">{{ resultado.incorrectas_reales|default:0 }}</div>
+                            <small class="text-muted">Incorrectas</small>
+                          </div>
+                          <div class="d-flex gap-2">
+                            <form method="POST" action="{% url 'base:eliminar_resultado_historial' resultado.id_resultado %}" style="display: inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este resultado?');"><i class="bi bi-trash"></i></button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <div class="text-center py-5">
+                      <i class="bi bi-globe-americas" style="font-size: 3rem; color: var(--secondary-teal)"></i>
+                      <h5 class="mt-3">No hay simulacros de Ciencias Sociales aún</h5>
+                      <p class="text-muted">¡Comienza tu primer simulacro para ver tu progreso!</p>
+                      <a href="{% url 'base:iniciar_simulacro' 'Ciencias Sociales' %}" class="btn btn-modern"><i class="bi bi-play-fill me-1"></i> Iniciar Simulacro</a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Ciencias Naturales -->
+              <div class="tab-pane fade" id="ciencias" role="tabpanel">
+                <div class="modern-table">
+                  {% if resultados_ciencias %}
+                    {% for resultado in resultados_ciencias %}
+                      <div class="exam-row d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="me-3">
+                            <div class="badge" style="
+                                background: var(--lighter-purple);
+                                color: var(--primary-purple);
+                                font-size: 0.9rem;
+                              ">{{ resultado.fecha_resultado|date:'d/m/Y' }}</div>
+                          </div>
+                          <div>
+                            <h6 class="mb-1">{{ resultado.examen.tipo|default:'Simulacro de Ciencias Naturales' }}</h6>
+                            <small class="text-muted">{{ resultado.fecha_resultado|time:'H:i'|default:'14:30' }}</small>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="text-center">
+                            <div class="fw-bold" style="color: var(--primary-purple)">{{ resultado.ciencias_naturales }}</div>
+                            <small class="text-muted">Puntaje</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.nivel_ciencias }}</div>
+                            <small class="text-muted">Nivel</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.total_preguntas_examen|default:0 }}</div>
+                            <small class="text-muted">Preguntas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-success">{{ resultado.correctas_reales|default:0 }}</div>
+                            <small class="text-muted">Correctas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-danger">{{ resultado.incorrectas_reales|default:0 }}</div>
+                            <small class="text-muted">Incorrectas</small>
+                          </div>
+                          <div class="d-flex gap-2">
+                            <form method="POST" action="{% url 'base:eliminar_resultado_historial' resultado.id_resultado %}" style="display: inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este resultado?');"><i class="bi bi-trash"></i></button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <div class="text-center py-5">
+                      <i class="bi bi-tree" style="font-size: 3rem; color: var(--secondary-teal)"></i>
+                      <h5 class="mt-3">No hay simulacros de Ciencias Naturales aún</h5>
+                      <p class="text-muted">¡Comienza tu primer simulacro para ver tu progreso!</p>
+                      <a href="{% url 'base:iniciar_simulacro' 'Ciencias Naturales' %}" class="btn btn-modern"><i class="bi bi-play-fill me-1"></i> Iniciar Simulacro</a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Inglés -->
+              <div class="tab-pane fade" id="ingles" role="tabpanel">
+                <div class="modern-table">
+                  {% if resultados_ingles %}
+                    {% for resultado in resultados_ingles %}
+                      <div class="exam-row d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="me-3">
+                            <div class="badge" style="
+                                background: var(--lighter-purple);
+                                color: var(--primary-purple);
+                                font-size: 0.9rem;
+                              ">{{ resultado.fecha_resultado|date:'d/m/Y' }}</div>
+                          </div>
+                          <div>
+                            <h6 class="mb-1">{{ resultado.examen.tipo|default:'Simulacro de Inglés' }}</h6>
+                            <small class="text-muted">{{ resultado.fecha_resultado|time:'H:i'|default:'14:30' }}</small>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="text-center">
+                            <div class="fw-bold" style="color: var(--primary-purple)">{{ resultado.ingles }}</div>
+                            <small class="text-muted">Puntaje</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.nivel_ingles }}</div>
+                            <small class="text-muted">Nivel</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold">{{ resultado.total_preguntas_examen|default:0 }}</div>
+                            <small class="text-muted">Preguntas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-success">{{ resultado.correctas_reales|default:0 }}</div>
+                            <small class="text-muted">Correctas</small>
+                          </div>
+                          <div class="text-center">
+                            <div class="fw-bold text-danger">{{ resultado.incorrectas_reales|default:0 }}</div>
+                            <small class="text-muted">Incorrectas</small>
+                          </div>
+                          <div class="d-flex gap-2">
+                            <form method="POST" action="{% url 'base:eliminar_resultado_historial' resultado.id_resultado %}" style="display: inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este resultado?');"><i class="bi bi-trash"></i></button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <div class="text-center py-5">
+                      <i class="bi bi-translate" style="font-size: 3rem; color: var(--secondary-teal)"></i>
+                      <h5 class="mt-3">No hay simulacros de Inglés aún</h5>
+                      <p class="text-muted">¡Comienza tu primer simulacro para ver tu progreso!</p>
+                      <a href="{% url 'base:iniciar_simulacro' 'Ingles' %}" class="btn btn-modern"><i class="bi bi-play-fill me-1"></i> Iniciar Simulacro</a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      // Datos del servidor
+      const datosEstudiante = {
+        puntajeGlobal: {{ puntaje_global|default:0 }},
+        totalSimulacros: {{ total_simulacros|default:0 }},
+        nivelGeneral: {{ nivel_general|default:1 }},
+        tiempoPromedio: {{ tiempo_promedio|default:45 }}, // Asumiendo que es en minutos, no horas como en la stat card
+        progreso: {
+          lectura: {{ progreso_materias.lectura|default:0 }},
+          matematicas: {{ progreso_materias.matematicas|default:0 }},
+          sociales: {{ progreso_materias.sociales|default:0 }},
+          ciencias: {{ progreso_materias.ciencias|default:0 }},
+          ingles: {{ progreso_materias.ingles|default:0 }},
+          general: {{ progreso_materias.general|default:0 }}
+        }
+      };
+
+      // Inicializar AOS (Animate On Scroll)
+      AOS.init({
+        duration: 800,
+        easing: 'ease-out',
+        once: true
+      });
+
+      // Crear gráficos circulares de progreso con datos reales
+      const subjects = [
+        { id: 'lectura', percentage: datosEstudiante.progreso.lectura, color: 'var(--primary-purple)' },
+        { id: 'matematicas', percentage: datosEstudiante.progreso.matematicas, color: 'var(--primary-purple)' },
+        { id: 'sociales', percentage: datosEstudiante.progreso.sociales, color: 'var(--primary-purple)' },
+        { id: 'naturales', percentage: datosEstudiante.progreso.ciencias, color: 'var(--primary-purple)' },
+        { id: 'ingles', percentage: datosEstudiante.progreso.ingles, color: 'var(--primary-purple)' },
+        { id: 'general', percentage: datosEstudiante.progreso.general, color: 'var(--primary-purple)' }
+      ];
+
+      subjects.forEach((subject) => {
+        const progressElement = document.getElementById(`progress-${subject.id}`);
+        if (progressElement) {
+          const percentage = subject.percentage;
+          const color = subject.color;
+
+          // Aplicar gradiente cónico basado en el porcentaje
+          progressElement.style.background = `conic-gradient(${color} ${percentage * 3.6}deg, #E5E7EB ${percentage * 3.6}deg)`;
+          
+          // Animar el progreso
+          let currentPercentage = 0;
+          const increment = percentage / 50; // 50 frames para la animación
+
+          const animateProgress = () => {
+            if (currentPercentage < percentage) {
+              currentPercentage += increment;
+              progressElement.style.background = `conic-gradient(${color} ${currentPercentage * 3.6}deg, #E5E7EB ${currentPercentage * 3.6}deg)`;
+              requestAnimationFrame(animateProgress);
+            } else {
+                 progressElement.style.background = `conic-gradient(${color} ${percentage * 3.6}deg, #E5E7EB ${percentage * 3.6}deg)`;
+            }
+          };
+          
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                currentPercentage = 0; // Reiniciar para la animación
+                setTimeout(animateProgress, Math.random() * 200 + 100); // Delay aleatorio para staggered effect
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.5 }); // Iniciar animación cuando el 50% es visible
+
+          observer.observe(progressElement);
+        }
+      });
+
+      // Efectos de hover en las cards
+      document.querySelectorAll('.subject-card').forEach((card) => {
+        card.addEventListener('mouseenter', function () {
+          // this.style.transform = 'translateY(-10px) scale(1.02)'; // Ya manejado por CSS :hover
+        });
+
+        card.addEventListener('mouseleave', function () {
+          // this.style.transform = 'translateY(0) scale(1)'; // Ya manejado por CSS :hover
+        });
+      });
+
+      // Efectos de click en estadísticas (shimmer ya está en CSS :hover)
+      document.querySelectorAll('.stat-card').forEach((card) => {
+        card.addEventListener('click', function () {
+          // Podríamos añadir un efecto de 'pop' o similar si se desea aquí.
+          // Por ahora, el shimmer se activa con hover a través de CSS.
+        });
+      });
+
+      // Mostrar notificaciones de logros
+      function showAchievement(title, message) {
+        const notification = document.createElement('div');
+        notification.className = 'position-fixed top-0 end-0 p-3';
+        notification.style.zIndex = '9999';
+        notification.innerHTML = `
+          <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+            <div class="toast-header">
+              <i class="bi bi-trophy-fill me-2" style="color: var(--secondary-teal);"></i>
+              <strong class="me-auto">${title}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              ${message}
+            </div>
+          </div>
+        `;
+        document.body.appendChild(notification);
+        var toast = new bootstrap.Toast(notification.querySelector('.toast'));
+        toast.show();
+        
+        notification.addEventListener('hidden.bs.toast', function () {
+            notification.remove();
+        });
+      }
+
+      // Mostrar logros basados en progreso real
+      setTimeout(() => {
+        const puntajeGlobal = datosEstudiante.puntajeGlobal;
+        const totalSimulacros = datosEstudiante.totalSimulacros;
+
+        if (puntajeGlobal >= 80) {
+          showAchievement('¡Excelente Rendimiento!', '🏆 ¡Has alcanzado un puntaje global superior a 80!');
+        } else if (puntajeGlobal >= 60) {
+          showAchievement('¡Buen Progreso!', '📈 ¡Continúa así, vas por buen camino!');
+        } else if (totalSimulacros >= 5) {
+          showAchievement('¡Constancia!', '💪 ¡Has completado ' + totalSimulacros + ' simulacros!');
+        } else {
+          //showAchievement('¡Bienvenido!', '🚀 ¡Comienza tu viaje de aprendizaje!'); // Comentado para no ser muy intrusivo al inicio
+        }
+      }, 2000);
+
+      // Agregar interactividad a los botones de práctica
+      document.querySelectorAll('.btn-modern, .btn-glassmorphism-teal, .btn-outline-modern, .btn-outline-teal').forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+          // Efecto de ripple
+          const ripple = document.createElement('span');
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+
+          ripple.style.width = ripple.style.height = size + 'px';
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+          ripple.classList.add('ripple');
+          
+          // Añadir clase específica para ripple teal si el botón es teal
+          if (this.classList.contains('btn-glassmorphism-teal') || this.classList.contains('btn-outline-teal')) {
+            ripple.classList.add('ripple-teal');
+          }
+
+          this.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+    </script>
+  </body>
+</html>

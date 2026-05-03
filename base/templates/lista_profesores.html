@@ -1,0 +1,414 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}
+  Gestión de Profesores
+{% endblock %}
+
+{% block page_content %}
+  
+  <h3 class="mb-3">Gestión de Profesores</h3>
+
+  <!-- Statistics Cards (Profesor specific) -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Total Profesores</h6>
+              <h4 class="mb-0">
+                {% if page_obj %}
+                  {{ page_obj.paginator.count }}
+                {% elif profesores %}
+                  {{ profesores|length }}
+                {% else %}
+                  0
+                {% endif %}
+              </h4>
+            </div>
+            <i class="bi bi-person-badge-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Activos</h6>
+              <h4 class="mb-0">{{ profesores_activos_count|default:0 }}</h4>
+            </div>
+            <i class="bi bi-check-circle-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Especializaciones</h6>
+              <h4 class="mb-0">{{ numero_especializaciones|default:'N/A' }}</h4>
+            </div>
+            <i class="bi bi-mortarboard-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-white-50 mb-1">Experiencia Promedio</h6>
+              <h4 class="mb-0">{{ experiencia_promedio_profesores|default:'N/A' }}</h4>
+            </div>
+            <i class="bi bi-award-fill opacity-75" style="font-size: 2rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters (Profesor specific) -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="GET" action="{% url 'base:listar_profesores' %}">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" name="q" placeholder="Buscar profesor..." value="{{ query_busqueda_actual|default:'' }}" />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" name="especializacion">
+              <option value="">Todas las especializaciones</option>
+              <option value="matematicas">Matemáticas</option>
+              <option value="ciencias">Ciencias</option>
+              <option value="lenguaje">Lenguaje</option>
+              <option value="historia">Historia</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" name="institucion">
+              <option value="">Todas las instituciones</option>
+              <option value="publica">Pública</option>
+              <option value="privada">Privada</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" name="estado">
+              <option value="">Todos los estados</option>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
+          </div>
+          <div class="col-md-1">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+          </div>
+          <div class="col-md-1">
+            <a href="{% url 'base:listar_profesores' %}" class="btn btn-outline-secondary w-100" title="Limpiar filtros"><i class="bi bi-arrow-clockwise"></i></a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Professors Table -->
+  <div class="card">
+    {# Eliminamos temporalmente TODO el card-header para la prueba #}
+    {% comment %}
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-person-badge-fill me-2"></i>
+          Lista de Profesores ({{ page_obj.paginator.count|default:0 }})
+        </h5>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-grid-3x3-gap"></i></button>
+          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-list"></i></button>
+        </div>
+      </div>
+    </div>
+    {% endcomment %}
+
+    {% if page_obj.object_list %}
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" class="form-check-input" />
+                </th>
+                <th>Profesor</th>
+                <th>Identificación</th>
+                <th>Contacto</th>
+                <th>Especialización</th>
+                <th>Institución</th>
+                <th>Fecha Registro</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for profesor in page_obj.object_list %}
+                <tr>
+                  <td>
+                    <input type="checkbox" class="form-check-input" />
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle bg-info text-white me-3">{{ profesor.nombre|first|default:'' }}{{ profesor.apellido|first|default:'' }}</div>
+                      <div>
+                        <div class="fw-semibold">{{ profesor.nombre }} {{ profesor.apellido }}</div>
+                        <small class="text-muted">ID: {{ profesor.id_profesor }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark">{{ profesor.identificacion }}</span>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="text-sm">{{ profesor.correo }}</div>
+                      <small class="text-muted">{{ profesor.telefono|default:'Sin teléfono' }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-primary bg-opacity-25 text-primary">{{ profesor.area_especializacion|default:'N/A' }}</span>
+                  </td>
+                  <td>
+                    <div class="fw-medium">{{ profesor.institucion|default:'N/A' }}</div>
+                  </td>
+                  <td>
+                    <div>
+                      <div>{{ profesor.fecha_registro|date:'d/m/Y'|default:'N/A' }}</div>
+                      {% if profesor.fecha_registro %}
+                        <small class="text-muted">{{ profesor.fecha_registro|timesince }} atrás</small>
+                      {% else %}
+                        <small class="text-muted">Fecha no disp.</small>
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge {% if profesor.estado == 'Activo' %}
+                        
+                        
+                        
+                        
+                        bg-success
+
+
+
+
+                      {% else %}
+                        
+                        
+                        
+                        
+                        bg-secondary
+
+
+
+
+                      {% endif %}">
+                      {{ profesor.estado|default:'Indefinido' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" title="Ver detalles"><i class="bi bi-eye"></i></button>
+                      <a href="{% url 'base:editar_profesor' profesor.id_profesor %}" class="btn btn-sm btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                      <a href="{% url 'base:eliminar_profesor' profesor.id_profesor %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar al profesor {{ profesor.nombre }} {{ profesor.apellido }}?')" title="Eliminar"><i class="bi bi-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {% if page_obj.has_other_pages %}
+        <div class="card-footer">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="text-muted">Mostrando {{ page_obj.start_index }}-{{ page_obj.end_index }} de {{ page_obj.paginator.count }} profesores</div>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                      href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}
+                        {% if key != 'page' %}
+                          
+                          
+                          
+                          
+                          &{{ key }}={{ value }}
+                        {% endif %}
+                      {% endfor %}">
+                      Anterior
+                    </a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                  </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ num }}</span>
+                    </li>
+                  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                      <a class="page-link"
+                        href="?page={{ num }}{% for key, value in request.GET.items %}
+                          {% if key != 'page' %}
+                            
+                            
+                            
+                            
+                            &{{ key }}={{ value }}
+                          {% endif %}
+                        {% endfor %}">
+                        {{ num }}
+                      </a>
+                    </li>
+                  {% elif num == page_obj.paginator.page_range.0 or num == page_obj.paginator.page_range.end %}
+                    {% if num == page_obj.paginator.page_range.0 and page_obj.number|add:'-3' > 1 %}
+                      <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                      </li>
+                    {% endif %}
+                    <li class="page-item">
+                      <a class="page-link"
+                        href="?page={{ num }}{% for key, value in request.GET.items %}
+                          {% if key != 'page' %}
+                            
+                            
+                            
+                            
+                            &{{ key }}={{ value }}
+                          {% endif %}
+                        {% endfor %}">
+                        {{ num }}
+                      </a>
+                    </li>
+                    {% if num == page_obj.paginator.page_range.end and page_obj.number|add:'3' < page_obj.paginator.num_pages %}
+                      <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                      </li>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                      href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}
+                        {% if key != 'page' %}
+                          
+                          
+                          
+                          
+                          &{{ key }}={{ value }}
+                        {% endif %}
+                      {% endfor %}">
+                      Siguiente
+                    </a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">Siguiente</span>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+        </div>
+      {% endif %}
+    {% else %}
+      <!-- Empty State -->
+      <div class="card-body">
+        <div class="empty-state">
+          <i class="bi bi-person-badge"></i>
+          <h4>
+            {% if request.GET.q or request.GET.especializacion or request.GET.institucion or request.GET.estado %}
+              No hay profesores que coincidan con tu búsqueda
+            {% else %}
+              No hay profesores registrados
+            {% endif %}
+          </h4>
+          <p>
+            {% if request.GET.q or request.GET.especializacion or request.GET.institucion or request.GET.estado %}
+              Intenta ajustar tus filtros o <a href="{% url 'base:listar_profesores' %}">limpiar la búsqueda</a>.
+            {% else %}
+              Comienza agregando el primer profesor al sistema.
+            {% endif %}
+          </p>
+          {% if not request.GET.q and not request.GET.especializacion and not request.GET.institucion and not request.GET.estado %}
+            <a href="{% url 'base:agregar_profesor' %}" class="btn btn-primary">
+              <i class="bi bi-plus-circle me-2"></i>
+              Agregar Primer Profesor
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .text-sm {
+      font-size: 0.875rem;
+    }
+    
+    .fw-medium {
+      font-weight: 500;
+    }
+    
+    .table th {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      color: #374151;
+    }
+    
+    .btn-group .btn {
+      border: 1px solid #dee2e6;
+    }
+    
+    .btn-group .btn:hover {
+      z-index: 2;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6c757d;
+    }
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #adb5bd;
+    }
+  </style>
+{% endblock %}

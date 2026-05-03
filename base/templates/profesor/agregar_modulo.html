@@ -1,0 +1,333 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agregar Módulo - TestNii</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+      :root {
+        --primary-purple: #7c3aed;
+        --light-purple: #a78bfa;
+        --lighter-purple: #ede9fe;
+        --darker-purple: #5b21b6;
+        
+        --secondary-teal: #14b8a6; 
+        --light-teal: #5eead4;    
+        --lighter-teal: #ccfbf1;  
+
+        --accent-pink: #ec4899; 
+        --light-pink: #fbcfe8;
+
+        --accent-amber: #f59e0b; 
+        --light-amber: #fef3c7;
+
+        --page-bg: linear-gradient(135deg, #f3e8ff 0%, #e0f2fe 100%);
+        --card-bg: #ffffff;
+        --card-border-subtle: #e0e7ff; 
+        
+        --text-primary-color: #1f2937; 
+        --text-secondary-color: #6b7280; 
+        --text-on-primary: #ffffff; 
+
+        --input-border-color: #d1d5db;
+        --input-focus-border-color: var(--primary-purple);
+        --input-bg-color: #f9fafb;
+
+        --shadow-color: rgba(91, 33, 182, 0.06);
+        --strong-shadow-color: rgba(91, 33, 182, 0.12);
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--page-bg);
+        color: var(--text-primary-color);
+        margin: 0;
+      }
+
+      .sidebar {
+        height: 100vh;
+        background-color: var(--card-bg);
+        box-shadow: 3px 0 10px rgba(0,0,0,0.05);
+        position: fixed;
+        width: 260px;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        padding-top: 1.5rem;
+      }
+
+      .main-content {
+        margin-left: 260px;
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centra el form-container */
+      }
+
+      .profile-section {
+        padding: 1rem 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid var(--card-border-subtle);
+        margin-bottom: 1rem;
+      }
+
+      .profile-brand {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .profile-brand i {
+        font-size: 2rem;
+      }
+
+      .profile-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--darker-purple);
+        margin-top: 0.5rem;
+      }
+      .profile-role {
+        font-size: 0.85rem;
+        color: var(--text-secondary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      .nav-link {
+        color: var(--text-secondary-color);
+        padding: 0.9rem 1.5rem;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        text-decoration: none;
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .nav-link:hover {
+        background-color: var(--lighter-purple);
+        color: var(--primary-purple);
+        border-left-color: var(--primary-purple);
+      }
+
+      .nav-link.active {
+        background-color: var(--lighter-purple);
+        color: var(--darker-purple);
+        font-weight: 600;
+        border-left-color: var(--darker-purple);
+      }
+      .nav-link.active .nav-icon {
+        color: var(--darker-purple);
+      }
+
+      .nav-icon {
+        margin-right: 1rem;
+        width: 22px;
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--light-purple);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 1.5rem;
+      }
+      
+      .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-logout {
+        background-color: var(--light-pink);
+        color: var(--accent-pink);
+        border: 1px solid var(--accent-pink);
+        width: 100%; 
+      }
+      .btn-logout:hover {
+        background-color: var(--accent-pink);
+        color: var(--text-on-primary);
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);
+      }
+
+      .btn-logout-sidebar {
+        background-color: transparent;
+        color: var(--text-secondary-color);
+        border: 1px solid var(--card-border-subtle);
+        width: 100%;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+      .btn-logout-sidebar:hover {
+        background-color: var(--lighter-pink);
+        color: var(--accent-pink);
+        border-color: var(--accent-pink);
+      }
+      .btn-logout-sidebar i {
+        margin-right: 0.8rem;
+      }
+      
+      .form-container {
+        background-color: var(--card-bg);
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px var(--strong-shadow-color);
+        width: 100%;
+        max-width: 700px; /* Ancho máximo para el formulario */
+        margin-top: 2rem;
+      }
+
+      .form-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+      .form-subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary-color);
+        margin-bottom: 2.5rem;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-primary-color);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .form-control,
+      .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--input-border-color);
+        border-radius: 8px;
+        background-color: var(--input-bg-color);
+        color: var(--text-primary-color);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: var(--input-focus-border-color);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        background-color: var(--card-bg);
+      }
+
+      .btn-submit {
+        background-color: var(--primary-purple);
+        color: var(--text-on-primary);
+        width: 100%; /* Botón de submit ocupa todo el ancho del form */
+        padding: 0.85rem 1.5rem;
+        font-size: 1.05rem;
+      }
+      .btn-submit:hover {
+        background-color: var(--darker-purple);
+        box-shadow: 0 6px 20px rgba(91, 33, 182, 0.3);
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="profile-section">
+        <div class="profile-brand">
+          <i class="bi bi-mortarboard-fill"></i> TestNii
+        </div>
+        <h5 class="profile-name">{{ request.session.profesor_nombre|default:"Profesor" }}</h5>
+        <p class="profile-role">Panel de Profesor</p>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="{% url 'base:panel_profesor' %}" class="nav-link">
+          <span class="nav-icon"><i class="bi bi-collection-fill"></i></span> Módulos
+        </a>
+        <a href="{% url 'base:ver_resultados_estudiantes_profesor' %}" class="nav-link">
+          <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Estudiantes
+        </a>
+        <a href="{% url 'base:editar_perfil_profesor' %}" class="nav-link"> 
+          <span class="nav-icon"><i class="bi bi-person-circle"></i></span> Perfil
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <form method="post" action="{% url 'base:logout_profesor' %}" style="width: 100%;">
+            {% csrf_token %}
+            <button type="submit" class="btn-modern btn-logout-sidebar">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="form-container">
+        <h2 class="form-title">Agregar Nuevo Módulo de Examen</h2>
+        <p class="form-subtitle">Completa los detalles para crear un nuevo módulo para tus estudiantes.</p>
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="tipo" class="form-label">Nombre o Tipo del Módulo:</label>
+            <input type="text" id="tipo" class="form-control" name="tipo" placeholder="Ej: Matemáticas Grado 10, Simulacro #1" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="duracion" class="form-label">Duración (en minutos):</label>
+            <input type="number" id="duracion" class="form-control" name="duracion" placeholder="Ej: 120" min="1" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="ubicacion" class="form-label">Ubicación (Opcional):</label>
+            <input type="text" id="ubicacion" class="form-control" name="ubicacion" placeholder="Ej: Salón A-101, Online" />
+          </div>
+          
+          <div class="form-group">
+            <label for="estado" class="form-label">Estado Inicial:</label>
+            <select id="estado" name="estado" class="form-select">
+              <option value="Activo" selected>Activo (Visible para estudiantes)</option>
+              <option value="Pendiente">Pendiente (Oculto)</option>
+              <option value="Realizado">Realizado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn-modern btn-submit">
+            <i class="bi bi-plus-circle-fill"></i> Guardar Módulo
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- No se necesita Bootstrap JS si no se usan sus componentes JS -->
+  </body>
+</html>

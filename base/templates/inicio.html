@@ -1,0 +1,409 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Platform</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+      :root {
+        --primary-color: #6952ec;
+        --secondary-color: #3f3d56;
+        --light-color: #f8f9fa;
+        --white-color: #ffffff;
+        --accent-yellow: #d9f13f;
+      }
+      
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      
+      .navbar {
+        background-color: var(--white-color);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      
+      .navbar-brand {
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+      
+      .nav-link {
+        color: var(--secondary-color);
+        font-weight: 500;
+      }
+      
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        border-radius: 5px;
+        padding: 8px 20px;
+        font-weight: 600;
+      }
+      
+      .hero-section {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+        padding: 80px 0;
+      }
+      
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      
+      .hero-text {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+      }
+      
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 40px;
+        text-align: center;
+      }
+      
+      .study-options {
+        padding: 60px 0;
+        background-color: var(--light-color);
+      }
+      
+      .option-card {
+        background-color: var(--white-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 30px;
+        transition: transform 0.3s;
+        min-height: 250px;
+      }
+      
+      .option-card.blue {
+        border-top: 5px solid #1e88e5;
+      }
+      
+      .option-card.purple {
+        border-top: 5px solid #9c27b0;
+      }
+      
+      .option-card.yellow {
+        border-top: 5px solid #ffc107;
+      }
+      
+      .option-card:hover {
+        transform: translateY(-5px);
+      }
+      
+      .features-section {
+        padding: 60px 0;
+      }
+      
+      .feature-item {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+      
+      .feature-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin: 20px 0 10px;
+        color: var(--secondary-color);
+      }
+      
+      .feature-desc {
+        color: #6c757d;
+      }
+      
+      .cta-section {
+        background-color: var(--secondary-color);
+        color: var(--white-color);
+        padding: 60px 0;
+        text-align: center;
+      }
+      
+      .cta-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      
+      .cta-btn {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 10px 30px;
+        font-weight: 600;
+        margin-top: 20px;
+      }
+      
+      footer {
+        background-color: var(--light-color);
+        padding: 30px 0;
+        text-align: center;
+      }
+      
+      .footer-links a {
+        color: var(--secondary-color);
+        margin: 0 15px;
+        text-decoration: none;
+      }
+      
+      .search-container {
+        position: relative;
+        max-width: 500px;
+        margin: 30px auto;
+      }
+      
+      .search-input {
+        border-radius: 25px;
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+        width: 100%;
+      }
+      
+      .search-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: var(--primary-color);
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      /* Modal Styles */
+      .modal-content {
+        border-radius: 20px;
+        border: 2px solid var(--primary-color);
+      }
+      
+      .modal-header {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      
+      .btn-close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+      }
+      
+      .text-purple {
+        color: var(--primary-color);
+      }
+      
+      .user-option {
+        border: 1px solid #e0e0e0;
+        border-radius: 15px;
+        transition: all 0.3s;
+        cursor: pointer;
+        height: 100%;
+      }
+      
+      .user-option:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 5px 15px rgba(105, 82, 236, 0.2);
+        transform: translateY(-5px);
+      }
+      
+      .user-image {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light py-3">
+      <div class="container">
+        <a class="navbar-brand" href="#">Testnii</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Sobre</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Funcionalidades</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contáctanos</a>
+            </li>
+          </ul>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Acceder</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <h1 class="hero-title">Comienza a mejorar tu futuro con Testnii!</h1>
+            <p class="hero-text">La plataforma ideal para prepararte para tus exámenes de forma eficiente y personalizada.</p>
+            <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#registerModal">Comenzar ahora</button>
+          </div>
+          <div class="col-lg-6 text-center">
+            <!-- Hero image placeholder -->
+            <img src="{% static 'img/inicio.png' %}" alt="Estudiante preparándose para examen" class="img-fluid" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Study Options Section -->
+    <section class="study-options">
+      <div class="container">
+        <h2 class="section-title">¿Cómo quieres estudiar?</h2>
+
+        <div class="search-container"></div>
+
+        <div class="row mt-5">
+          <div class="col-md-4">
+            <div class="option-card blue">
+              <img src="{% static 'img/Chat_AI.png' %}" alt="Tests rápidos" class="img-fluid mb-3" />
+              <h3>Tests rápidos</h3>
+              <p>Evalúa tu conocimiento en minutos</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="option-card purple">
+              <img src="{% static 'img/Pruebas.png' %}" alt="Pruebas de práctica" class="img-fluid mb-3" />
+              <h3>Pruebas de práctica</h3>
+              <p>Simula exámenes reales</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="option-card yellow">
+              <img src="{% static 'img/Tarjetas_didacticas.png' %}" alt="Tarjetas didácticas" class="img-fluid mb-3" />
+              <h3>Retroalimentacion AI</h3>
+              <p>Analiza en que te equivocaste</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="container">
+        <h2 class="section-title">Nuestras funcionalidades</h2>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="feature-item">
+              <img src="{% static 'img/1.png' %}" alt="Simuladores Personalizados" class="img-fluid" />
+              <h3 class="feature-title">Simuladores Personalizados</h3>
+              <p class="feature-desc">Practica con exámenes que se adaptan a tu nivel y necesidades específicas, identificando tus fortalezas y áreas de mejora.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature-item">
+              <img src="{% static 'img/2.png' %}" alt="Análisis de progreso" class="img-fluid" />
+              <h3 class="feature-title">Análisis de progreso</h3>
+              <p class="feature-desc">Visualiza tu evolución en cada tema, con estadísticas detalladas que te ayudan a enfocar tu estudio en las áreas que más lo necesitan.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature-item">
+              <img src="{% static 'img/1.png' %}" alt="Material didáctico" class="img-fluid" />
+              <h3 class="feature-title">Material didáctico</h3>
+              <p class="feature-desc">Accede a recursos educativos de alta calidad que complementan tu preparación y refuerzan tu aprendizaje.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-8 text-center">
+            <h2 class="cta-title">¡La mejor portal para estudiar cuando quieras y como quieras!</h2>
+            <button class="btn cta-btn" data-bs-toggle="modal" data-bs-target="#registerModal">Regístrate ahora</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Registration Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center pb-5">
+            <p class="text-purple">¿No tienes cuenta?</p>
+            <h2 class="modal-title fw-bold mb-4" id="registerModalLabel">Registrate en Testnii</h2>
+
+            <div class="row justify-content-center">
+              <div class="col-md-4 mb-3">
+                <div class="user-option p-3">
+                  <div class="user-image mb-3">
+                    <!-- Espacio para la imagen del profesor -->
+                    <a href="{% url 'base:signup_profesor' %}"><img width="60px" height="auto" src="{% static 'img/profesor.png' %}" alt="Profesor" class="img-fluid" /></a>
+                  </div>
+                  <h5>Profesor</h5>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="user-option p-3">
+                  <div class="user-image mb-3">
+                    <!-- Espacio para la imagen del estudiante -->
+                    <a href="{% url 'base:signup_estudiante' %}"><img width="300px" height="auto" src="{% static 'img/estudiante.png' %}" alt="Estudiante" class="img-fluid" /></a>
+                  </div>
+                  <h5>Estudiante</h5>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="user-option p-3">
+                  <div class="user-image mb-3">
+                    <a class="signup-link" href="{% url 'base:signup_administrador' %}"><img src="{% static 'img/admin.png' %}" alt="Admin" class="img-fluid" /></a>
+                  </div>
+                  <h5>Admin</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-links">
+          <a href="#">Términos y condiciones</a>
+          <a href="#">Política de privacidad</a>
+          <a href="#">Ayuda</a>
+          <a href="#">Contacto</a>
+        </div>
+        <p class="mt-3 mb-0">&copy; 2025 Testnii. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
