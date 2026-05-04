@@ -14,7 +14,7 @@ Graduation Project 2025** at SENA.
 
 ## Project Showcase
 
-[![Testnii Platform Demo](https://img.youtube.com/vi/TU_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=TU_VIDEO_ID)
+[![Testnii Platform Demo](https://img.youtube.com/vi/GfXuwZjTPQQ/0.jpg)](https://www.youtube.com/watch?v=GfXuwZjTPQQ)
 *Click the image above to watch the full platform walkthrough.*
 
 ---
